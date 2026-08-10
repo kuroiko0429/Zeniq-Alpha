@@ -1,0 +1,350 @@
+@charset "UTF-8";
+
+:root {
+    --color1: #F8FCFF;
+    --color15: #EEF8FF;
+    --color2: #DBECF9;
+    --color3: #C9D8E4;
+    --color4: #56708D;
+    --color5: #00234B;
+    --blue: #2A70C9;
+    --red: #DF6161;
+    --green: #1DB756;
+    --light-red: #FFF2F2;
+    --light-green: #EBFFF3;
+}
+
+/* 全体設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Noto Sans JP", sans-serif;
+}
+
+body {
+    background-color: var(--color1);
+    color: var(--color5);
+}
+
+/* ヘッダーのスタイリング */
+/* header {
+    background-color: var(--color2);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: var(--blue);
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-item.active {
+    background-color: var(--blue);
+    color: var(--color1);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-name {
+    font-size: 14px;
+    color: var(--color5);
+    font-weight: bold;
+}
+
+.logout-btn {
+    background-color: var(--red);
+    color: var(--color1);
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+    background-color: var(--red);
+} */
+
+/* メインコンテンツエリア */
+.container {
+    max-width: 970px;
+    margin: 40px auto;
+    padding: 0 20px;
+
+}
+
+/* 日別  全期間 ボタン */
+.period-container {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* 初期状態で全期間のカードを非表示にする */
+.analysis-card-zen {
+    display: none;
+}
+
+.is-hidden {
+    display: none !important;
+}
+
+.nitibetu,
+.zenkikan {
+    background-color: var(--color2);
+    color: var(--color5);
+    border: none;
+    width: 90px;
+    height: 40px;
+    border-radius: 6px 6px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.nitibetu.active,
+.zenkikan.active {
+    background-color: var(--blue);
+    color: #fff;
+}
+
+/* 分析ボード本体（薄いグレーの枠線カード） */
+.analysis-card-niti,
+.analysis-card-zen {
+    border-radius: 8px;
+    padding: 30px;
+    background-color: var(--color15);
+    border: 1px solid var(--color2);
+    border-radius: 6px;
+    padding: 25px;
+}
+
+.date-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1a202c;
+    margin-bottom: 20px;
+}
+
+/* 合計 */
+.yyyy {
+    display: flex;
+    gap: 10px;
+}
+
+.yyyy img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 35px;
+}
+
+.metric-box {
+    background-color: var(--color2);
+    border-radius: 6px;
+    padding: 15px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100px;
+}
+
+.metric-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--color5);
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--color5);
+}
+
+/* 売上合計や件数などの色味の個別微調整 */
+.metric-value.total {
+    color: var(--blue);
+}
+
+.metric-value.count {
+    color: var(--color5);
+}
+
+/* 模擬券ボックスの特殊レイアウト（内訳と金額の横並び） */
+.ticket-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.ticket-breakdown {
+    text-align: left;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--color5);
+    line-height: 1.4;
+}
+
+/* 商品別売上 */
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color5);
+    border-top: 1px solid var(--color3);
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+#products-grid-zen{
+    margin-bottom: 20px;
+}
+
+.product-item {
+    background-color: var(--color2);
+    border-radius: 6px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-info .product-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color5);
+    margin-bottom: 4px;
+}
+
+.product-info .product-qty {
+    font-size: 12px;
+    color: var(--color4);
+    font-weight: bold;
+}
+
+.product-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--blue);
+}
+
+/* ===== 動的表示用（実データ連携で追加） ===== */
+
+/* 日別カードの日付ピッカー（date-title と見た目を揃える） */
+.date-picker-input {
+    font-size: 20px;
+    font-weight: bold;
+    color: #1a202c;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* 読み込み中表示 */
+.loading-text {
+    padding: 20px 0;
+    color: var(--color4);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* エラー表示 */
+.error-text {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    background-color: var(--light-red);
+    color: var(--red);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* 商品別売上が0件のときのメッセージ（2カラムのグリッドいっぱいに表示） */
+.product-item.empty-message {
+    grid-column: 1 / -1;
+    justify-content: center;
+    color: var(--color4);
+    font-weight: bold;
+}
+
+/* 全期間タブの日別推移テーブル */
+.trend-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.trend-table th {
+    background-color: var(--color2);
+    color: var(--color5);
+    font-size: 13px;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px 15px;
+}
+
+.trend-table th:first-child {
+    border-radius: 6px 0 0 6px;
+}
+
+.trend-table th:last-child {
+    border-radius: 0 6px 6px 0;
+}
+
+.trend-table td {
+    padding: 12px 15px;
+    font-size: 14px;
+    color: var(--color5);
+    border-bottom: 1px solid var(--color3);
+}
+
+.trend-table th.num,
+.trend-table td.num {
+    text-align: right;
+}
+
+.trend-table td:last-child {
+    color: var(--blue);
+    font-weight: bold;
+}

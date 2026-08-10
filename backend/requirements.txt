@@ -1,0 +1,10 @@
+fastapi==0.111.0
+uvicorn==0.29.0
+sqlalchemy==2.0.30
+pydantic==2.7.1
+python-jose==3.3.0    # JWTの生成・検証
+passlib[bcrypt]==1.7.4  # パスワードの暗号化
+python-multipart==0.0.9 # フォームデータの受け取り
+bcrypt==4.0.1
+psycopg2-binary==2.9.9 # PostgreSQL driver
+alembic==1.13.1        # Database migrations

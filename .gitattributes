@@ -1,0 +1,19 @@
+# シェルスクリプトは常にLF改行で保持する
+# （WindowsでcloneしてCRLFに変換されると、Dockerコンテナ内で
+#  "exec ./entrypoint.sh: no such file or directory" エラーになる）
+*.sh text eol=lf
+
+# Pythonやその他テキストファイルも基本LFで統一
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.ini text eol=lf
+*.md text eol=lf
+Dockerfile text eol=lf
+
+# 画像など、改行コード変換が不要なバイナリファイル
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>POSレジ</title>
+
+        <!-- リセットCSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <!-- Google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <!-- css -->
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/header.css">
+
+        <link rel="icon" href="img/Group 49.png">
+    </head>
+
+    <body>
+
+        <main>
+            <div class="container">
+                <div class="select-area">
+                    <h2 class="select-title">商品選択</h2>
+                    <div class="item-area">
+                        <dl class="item-list">
+                            <!-- ここにJSで商品が追加される -->
+                        </dl>
+                    </div>
+                </div>
+                <div class="cart-area">
+                    <h2 class="cart-title">
+                        カート
+                    </h2>
+                    <div class="cart-content">
+                        <div class="cart-item-area">
+                            <!-- ここにJSでアイテムが追加されます。 -->
+                        </div>
+                        <div class="pay-area">
+                            <div class="sum-title">
+                                <h3>合計</h3>
+                                <p>￥ <span class="total-price">---</span></p>
+                            </div>
+
+                            <ul class="pay-how-btn-list">
+                                <li><button onclick="onPayHow(this,'cash')">現金</button></li>
+                                <li><button onclick="onPayHow(this,'ticket')">模擬券</button></li>
+                                <li><button onclick="onPayHow(this,'qr')">QR決済</button></li>
+                            </ul>
+
+                            <div class="pay-how-detail">
+                                <div class="pay-how-detail-cash">
+                                    <div class="deposit">
+                                        <p class="pay-how-subtitle">預り金（円）</p>
+                                        <div class="deposit-input-area">
+                                            ￥ <input type="number">
+                                        </div>
+                                    </div>
+                                    <div class="change">
+                                        <p class="pay-how-subtitle">お釣り</p>
+                                        <p class="deposit-shortage-msg"></p>
+                                        <p class="change-result">￥ <span class="change-price">---</span></p>
+                                    </div>
+                                </div>
+
+                                <div class="pay-how-detail-ticket">
+                                    <div class="ticket-input-area">
+                                        <div>
+                                            <span>100円券（枚）</span>
+                                            <input type="number" class="ticket100-input">
+                                        </div>
+                                        <div>
+                                            <span>200円券（枚）</span>
+                                            <input type="number" class="ticket200-input">
+                                        </div>
+                                    </div>
+                                    <div class="ticket-sum">
+                                        <p>模擬券合計</p>
+                                        <p class="ticket-sum-result">￥ <span class="ticket-total-price">---</span></p>
+                                    </div>
+                                    <div class="ticket-shortage-area">
+                                        <div class="ticket-shortage">
+                                            <p>不足額</p>
+                                            <p class="ticket-shortage-result">￥ <span
+                                                    class="ticket-shortage-price">---</span></p>
+                                        </div>
+                                        <p class="add-pay-how-title">追加の支払方法</p>
+                                        <ul class="add-pay-how-btn-list">
+                                            <li><button data-option="cash">現金</button></li>
+                                            <li><button data-option="qr">QR決済</button></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="cash-for-ticket">
+                                        <div class="for-ticket-deposit">
+                                            <p class="for-ticket-pay-how-subtitle">預り金（円）</p>
+                                            <div class="for-ticket-deposit-input-area">
+                                                ￥ <input type="number">
+                                            </div>
+                                        </div>
+                                        <div class="for-ticket-change">
+                                            <p class="for-ticket-pay-how-subtitle">お釣り</p>
+                                            <p class="for-ticket-deposit-shortage-msg"></p>
+                                            <p class="for-ticket-change-result">￥ <span
+                                                    class="for-ticket-change-price">---</span></p>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+
+                            <button class="execute-pay-btn">会計する</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="js/header.js"></script>
+        <script type="module" src="js/pos.js"></script>
+        <script src="js/toast.js"></script>
+    </body>
+
+</html>

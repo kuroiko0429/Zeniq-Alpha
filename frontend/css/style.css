@@ -1,0 +1,431 @@
+/* common */
+@charset "UTF-8";
+html {
+    font-size: 100%;
+}
+
+body {
+    background-color: var(--color1);
+    color: var(--color5);
+    min-height: 100vh;
+}
+
+img {
+    vertical-align: bottom;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+:root {
+    --color1: #F8FCFF;
+    --color15: #EEF8FF;
+    --color2: #DBECF9;
+    --color3: #C9D8E4;
+    --color4: #56708D;
+    --color5: #00234B;
+    --blue: #2A70C9;
+    --red: #DF6161;
+    --green: #1DB756;
+    --light-red: #FFF2F2;
+    --light-green: #EBFFF3;
+}
+
+/* common ここまで*/
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.select-area {
+    flex-grow: 1;
+    padding: 0 16px;
+    padding-top: 32px;
+}
+
+.cart-area {
+    width: 400px;
+    background-color: var(--color15);
+    min-height: calc(100vh - 82px);
+    border-left: 1px solid var(--color3);
+}
+
+.select-title {
+    font-size: 1.625rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.item-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 200px);
+    gap: 16px 12px;
+}
+
+.item-list>div {
+    background-color: var(--color2);
+    border-radius: 6px;
+    padding: 18px 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.item-list dt {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.item-list dd {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--blue);
+}
+
+.item-list dd.item-stock{
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--color5);
+}
+
+.cart-area {
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-title {
+    font-size: 1.625rem;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--color3);
+}
+
+.cart-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* カートアイテム */
+.cart-item-area {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+}
+
+.cart-item {
+    border-radius: 6px;
+    background-color: var(--color2);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.cart-item-name {
+    font-weight: 700;
+}
+
+.cart-item-edit {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+}
+
+.cart-item-edit-num {
+    border-radius: 6px;
+    background-color: var(--color3);
+    /* padding: 8px; */
+    width: 28px;
+    aspect-ratio: 1/1;
+    text-align: center;
+}
+
+.cart-item-num {
+    padding: 0 10px;
+}
+
+.cart-item-edit-delete {
+    margin-left: 20px;
+    background-color: var(--red);
+    border-radius: 6px;
+    width: 28px;
+    aspect-ratio: 1/1;
+    color: #fff;
+}
+
+.pay-area {
+    border-top: 1px solid var(--color3);
+    flex-shrink: 0;
+    padding: 20px;
+}
+
+.sum-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
+
+.sum-title h3 {
+    font-size: 1.5rem;
+}
+
+.sum-title p {
+    font-size: 1.5rem;
+    color: var(--blue);
+    font-weight: 900;
+}
+
+.pay-how-btn-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.pay-how-btn-list button {
+    display: block;
+    width: 100%;
+    padding: 6px;
+    border-radius: 6px;
+    text-align: center;
+    background-color: var(--color3);
+}
+
+.is-selected-btn {
+    background-color: var(--blue) !important;
+    color: #fff !important;
+}
+
+.execute-pay-btn {
+    padding: 10px;
+    border-radius: 6px;
+    background-color: var(--color3);
+    text-align: center;
+    width: 100%;
+    font-weight: 700;
+}
+.execute-pay-btn.is-available{
+    background-color: var(--green);
+    color:var(--color1);
+}
+
+.pay-how-detail {
+    margin-bottom: 15px;
+}
+
+/* 現金 */
+.pay-how-detail-cash {
+    border-radius: 6px;
+    padding: 10px;
+    border: 1px solid var(--color2);
+}
+
+.deposit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color2);
+}
+
+.deposit-input-area {
+    color: var(--blue);
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1rem;
+}
+
+.pay-how-detail input {
+    display: block;
+    width: 100%;
+    background-color: var(--color2);
+    padding: 2px 6px;
+    color: var(--blue);
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.deposit-input-area input {
+    width: 7rem;
+}
+
+.change {
+    font-size: 1rem;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.deposit-shortage-msg {
+    display: none;
+}
+
+.deposit-shortage-msg.is-displayed {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--red);
+}
+
+.change-result {
+    font-weight: 900;
+    color: var(--blue);
+}
+
+.pay-how-subtitle {
+    font-weight: 700;
+}
+
+
+/* 模擬券 */
+.pay-how-detail-ticket {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--color2);
+}
+
+.ticket-input-area {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color2);
+}
+
+.ticket-input-area div>span {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.ticket-sum {
+    font-weight: 500;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.ticket-sum-result {
+    color: var(--blue)
+}
+
+.ticket-shortage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--blue);
+    font-weight: 500;
+    padding-top: 6px;
+    margin-top: 6px;
+    border-top: 1px solid var(--color2);
+    margin-bottom: 10px;
+}
+
+.add-pay-how-title {
+    margin-bottom: 5px;
+}
+
+.add-pay-how-btn-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.add-pay-how-btn-list button {
+    display: block;
+    width: 100%;
+    border-radius: 6px;
+    padding: 4px;
+    background-color: var(--color2);
+    font-weight: 700;
+    text-align: center;
+}
+
+/* 無効化見た目 */
+.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.pay-how-detail-cash {
+    display: none;
+}
+
+.pay-how-detail-ticket {
+    display: none;
+}
+
+.cash-for-ticket {
+    margin-top: 20px;
+    display: none;
+    padding: 10px 12px;
+    border: 1px solid var(--color2);
+    border-radius: 6px;
+}
+
+.for-ticket-deposit{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color2);
+}
+.for-ticket-deposit-input-area input {
+    width: 7rem;
+}
+.for-ticket-deposit-input-area{
+    display: flex;
+    align-items: center;
+}
+.for-ticket-change-result{
+    font-weight: 900;
+}
+.for-ticket-deposit-shortage-msg{
+    color:var(--red);
+    font-size: 0.75rem;
+}
+.for-ticket-change{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 6px;
+}
+.for-ticket-pay-how-subtitle{
+    font-weight: 700;
+}
+
+/* 模擬券金額足りている時のオーバーレイ */
+.ticket-shortage-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background-color: rgba(238, 248, 255, 0.7); /* --color15 */
+    border-radius: 6px;
+    pointer-events: all;
+    z-index: 1;
+}

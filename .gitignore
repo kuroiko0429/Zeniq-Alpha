@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# SQLite DB（本番データをGitに含めない）
+*.db
+
+# 環境変数（パスワードなどの機密情報）
+.env
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Mac
+.DS_Store
+
+# Docker
+*.log

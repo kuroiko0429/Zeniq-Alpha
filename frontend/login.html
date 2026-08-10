@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>学祭用POSレジ</title>
+        <!-- リセットCSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <!-- Google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <!-- css -->
+        <link rel="stylesheet" href="css/login.css">
+
+        <link rel="icon" href="img/Group 49.png">
+    </head>
+
+    <body>
+        <main>
+            <div class="login">
+                <h1 class="app-title">
+                    Zeniq
+                </h1>
+                <span class="app-sub-title">学祭用POSレジアプリ</span>
+                <p class="login-explain for-login">
+                    お店のアカウントでログインしてください。<br>
+                    <!-- アカウントをお持ちでない方は「新規作成」からアカウントを作成してください。 -->
+                </p>
+
+                <!-- <p class="login-explain for-register">
+                    お店のアカウントを新規作成してください。
+                </p> -->
+
+                <!-- <div class="switch-wrapper">
+                    <button type="button" id="switch-login" class="selected">ログイン</button>
+                    <button type="button" id="switch-register">新規登録</button>
+                </div> -->
+
+                <form id="login-form" class="for-login">
+                    <div class="form-item">
+                        <label for="login-username">ユーザー名</label>
+                        <input type="text" id="login-username" placeholder="例）your_store_name" autocomplete="username"
+                            required>
+                    </div>
+                    <div class="form-item">
+                        <label for="login-password">パスワード</label>
+                        <input type="password" id="login-password" placeholder="例）password"
+                            autocomplete="current-password" required>
+                    </div>
+
+                    <p class="form-error" id="login-error" hidden></p>
+
+                    <button type="submit" id="login-submit">ログイン</button>
+                </form>
+
+                <!-- <form id="register-form" class="for-register">
+                    <div class="form-item">
+                        <label for="register-name">お店の名前</label>
+                        <input type="text" id="register-name" placeholder="例）たこ焼き屋" autocomplete="organization" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="register-username">ユーザー名</label>
+                        <input type="text" id="register-username" placeholder="例）your_store_name" autocomplete="username" required>
+                    </div>
+                    <div class="form-item">
+                        <label for="register-password">パスワード</label>
+                        <input type="password" id="register-password" placeholder="例）password" autocomplete="new-password" required>
+                    </div>
+
+                    <p class="form-error" id="register-error" hidden></p>
+
+                    <button type="submit" id="register-submit">新規作成</button>
+                </form> -->
+            </div>
+        </main>
+
+
+        <script type="module" src="js/login.js"></script>
+        <script src="js/toast.js"></script>
+    </body>
+
+</html>

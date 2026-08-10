@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>POSレジ</title>
+
+        <!-- リセットCSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <!-- Google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <!-- css -->
+        <link rel="stylesheet" href="css/orders.css">
+        <link rel="stylesheet" href="css/header.css">
+
+        <link rel="icon" href="img/Group 49.png">
+    </head>
+
+    <body>
+
+        <main>
+            <div class="container">
+                <h2 class="page-title">
+                    会計履歴
+                </h2>
+                <div class="switch-term-area">
+                    <button data-term="day" class="isSelected">日別</button>
+                    <button data-term="all">全期間</button>
+                </div>
+
+                <div class="search-area">
+                    <h3 class="search-area-title">検索フィルター</h3>
+
+                    <div class="search-item-list">
+                        <div class="search-item">
+                            <label for="value">金額</label>
+                            <input id="value" type="number">
+                        </div>
+
+                        <div class="search-item">
+                            <label for="how">決済方法</label>
+                            <select id="how">
+                                <option value="none">指定なし</option>
+                                <option value="cash">現金</option>
+                                <option value="ticket">模擬券</option>
+                                <option value="ticketAndCash">模擬券+現金</option>
+                                <option value="ticketAndQr">模擬券+QR決済</option>
+                                <option value="qr">QR決済</option>
+                            </select>
+                        </div>
+                        <div class="search-item all-term-only">
+                            <label for="startday">開始日</label>
+                            <input type="date" id="startday">
+                        </div>
+                        <div class="search-item">
+                            <label for="starttime">開始時刻</label>
+                            <input type="time" id="starttime">
+                        </div>
+                        <div class="search-item all-term-only">
+                            <label for="startday">終了日</label>
+                            <input type="date" id="endday">
+                        </div>
+                        <div class="search-item">
+                            <label for="starttime">終了時刻</label>
+                            <input type="time" id="endtime">
+                        </div>
+                    </div>
+
+                    <div class="item-search-area">
+                        <label for="items" class="item-search-checks-title">商品で絞り込み</label>
+                        <div class="item-search-checks">
+                            <!-- ここにJSで生成-->
+                        </div>
+                    </div>
+
+                    <button class="search-clear-btn">検索をクリア</button>
+                </div>
+
+                <!--ここ今後JS作成で-->
+                <div class="order-list">
+                    <!--ここ今後JS作成で-->
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="js/header.js"></script>
+        <script type="module" src="js/orders.js"></script>
+        <script src="js/toast.js"></script>
+    </body>
+
+</html>

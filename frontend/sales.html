@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>売上分析|学祭用POSレジ</title>
+
+        <!-- リセットCSS -->
+        <link ref="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <!--Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <!--css-->
+        <link rel="stylesheet" href="css/header.css">
+        <link rel="stylesheet" href="css/sales.css">
+
+        <link rel="icon" href="img/Group 49.png">
+
+    </head>
+
+    <body>
+        <!-- <header>
+        <div class="nav-left">
+            <a href="#" class="nav-item">POSレジ</a>
+            <a href="items.html" class="nav-item active">商品管理</a>
+            <a href="#" class="nav-item">会計履歴</a>
+            <a href="sales.html" class="nav-item">売上分析</a>
+        </div>
+        <div class="nav-right">
+            <span class="user-name">ぴろぴろ屋</span>
+            <a href="#" class="logout-btn">ログアウト</a>
+        </div>
+    </header> -->
+
+        <main>
+            <div class="container">
+                <div class="period-container">
+                    <button class="nitibetu active" id="btn-niti">日別</button>
+                    <button class="zenkikan" id="btn-zen">全期間</button>
+                </div>
+
+                <!-- 日別 -->
+                <div class="analysis-card-niti">
+                    <div class="yyyy">
+                        <img src="img/calendar.png" alt="">
+                        <input type="date" id="niti-date-input" class="date-title date-picker-input">
+                    </div>
+
+                    <div id="niti-loading" class="loading-text" style="display:none;">読み込み中...</div>
+                    <div id="niti-error" class="error-text" style="display:none;"></div>
+
+                    <div id="niti-content">
+                        <div class="summary-grid">
+                            <div class="metric-box">
+                                <div class="metric-label">売上合計</div>
+                                <div class="metric-value total" id="total-revenue-niti">¥ 0</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">会計件数</div>
+                                <div class="metric-value count" id="total-orders-niti">0件</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">現金</div>
+                                <div class="metric-value" id="cash-amount-niti">¥ 0</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">模擬券</div>
+                                <div class="ticket-details">
+                                    <div class="ticket-breakdown" id="ticket-breakdown-niti">
+                                        100円券<br>0枚<br>
+                                        200円券<br>0枚
+                                    </div>
+                                    <div class="metric-value" id="ticket-amount-niti">¥ 0</div>
+                                </div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">QR決済</div>
+                                <div class="metric-value" id="emoney-amount-niti">¥ 0</div>
+                            </div>
+                        </div>
+
+                        <h3 class="section-title">商品別売上</h3>
+                        <div class="products-grid" id="products-grid-niti">
+                            <!-- JSで動的に生成 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!--全期間-->
+                <div class="analysis-card-zen">
+                    <div class="yyyy">
+                        <img src="img/calendar.png" alt="">
+                        <h2 class="date-title">全期間</h2>
+                    </div>
+
+                    <div id="zen-loading" class="loading-text" style="display:none;">読み込み中...</div>
+                    <div id="zen-error" class="error-text" style="display:none;"></div>
+
+                    <div id="zen-content">
+                        <div class="summary-grid">
+                            <div class="metric-box">
+                                <div class="metric-label">売上合計</div>
+                                <div class="metric-value total" id="total-revenue-zen">¥ 0</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">会計件数</div>
+                                <div class="metric-value count" id="total-orders-zen">0件</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">現金</div>
+                                <div class="metric-value" id="cash-amount-zen">¥ 0</div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">模擬券</div>
+                                <div class="ticket-details">
+                                    <div class="ticket-breakdown" id="ticket-breakdown-zen">
+                                        100円券<br>0枚<br>
+                                        200円券<br>0枚
+                                    </div>
+                                    <div class="metric-value" id="ticket-amount-zen">¥ 0</div>
+                                </div>
+                            </div>
+                            <div class="metric-box">
+                                <div class="metric-label">QR決済</div>
+                                <div class="metric-value" id="emoney-amount-zen">¥ 0</div>
+                            </div>
+                        </div>
+
+                        <h3 class="section-title">商品別売上</h3>
+                        <div class="products-grid" id="products-grid-zen">
+                            <!-- JSで動的に生成 -->
+                        </div>
+
+                        <h3 class="section-title">日別推移</h3>
+                        <table class="trend-table">
+                            <thead>
+                                <tr>
+                                    <th>日付</th>
+                                    <th class="num">会計件数</th>
+                                    <th class="num">売上</th>
+                                </tr>
+                            </thead>
+                            <tbody id="daily-trend-zen">
+                                <!-- JSで動的に生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="js/header.js"></script>
+        <script type="module" src="js/sales.js"></script>
+        <script src="js/toast.js"></script>
+    </body>
+
+</html>

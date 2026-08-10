@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>商品管理|学祭用POSレジ</title>
+
+        <!-- リセットCSS -->
+        <link ref="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <!--Google font-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <!--css-->
+        <link rel="stylesheet" href="css/header.css">
+        <link rel="stylesheet" href="css/items.css">
+
+        <link rel="icon" href="img/Group 49.png">
+    </head>
+
+    <body>
+
+        <!-- <header>
+        <div class="nav-left">
+            <a href="#" class="nav-item">POSレジ</a>
+            <a href="items.html" class="nav-item active">商品管理</a>
+            <a href="#" class="nav-item">会計履歴</a>
+            <a href="sales.html" class="nav-item">売上分析</a>
+        </div>
+        <div class="nav-right">
+            <span class="user-name">ぴろぴろ屋</span>
+            <a href="#" class="logout-btn">ログアウト</a>
+        </div>
+    </header> -->
+
+        <main>
+            <h1>商品管理</h1>
+
+            <div class="action-area">
+                <div class="add-product-container">
+                    <button class="add-product-btn">
+                        <img src="img/Plus.png" alt="">
+                        <i class="fa-solid fa-plus"></i> 新しい商品を追加
+                    </button>
+
+                    <div class="add-panel">
+                        <h2 class="add-panel-title">新しい商品</h2>
+                        <div class="add-panel-body">
+                            <div class="form-group">
+                                <label>商品名</label>
+                                <input type="text" placeholder="例）やきそば" class="modal-input js-add-name">
+                            </div>
+                            <div class="form-group">
+                                <label>価格（円）</label>
+                                <input type="number" min="0" placeholder="例）400" class="modal-input js-add-price">
+                            </div>
+                            <div class="form-group">
+                                <label>在庫数</label>
+                                <input type="number" min="0" placeholder="例）100" class="modal-input js-add-stock">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-cancel js-add-cancel">キャンセル</button>
+                                <button type="button" class="btn-save js-add-save">追加</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="product-grid">
+                <!-- 商品カードはitems.jsによって動的に描画されます -->
+
+            </div>
+        </main>
+
+        <script type="module" src="js/header.js"></script>
+        <script type="module" src="js/items.js"></script>
+        <script src="js/toast.js"></script>
+    </body>
+
+</html>

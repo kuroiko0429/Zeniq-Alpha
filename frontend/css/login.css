@@ -1,0 +1,159 @@
+@charset "UTF-8";
+
+/* common */
+
+html {
+    font-size: 100%;
+}
+
+body {
+    background-color: var(--color1);
+    color: var(--color5);
+
+}
+
+img {
+    vertical-align: bottom;
+}
+
+ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color:inherit;
+}
+
+button {
+    color: inherit;
+}
+
+:root {
+    --color1: #F8FCFF;
+    --color15: #EEF8FF;
+    --color2: #DBECF9;
+    --color3: #C9D8E4;
+    --color4: #56708D;
+    --color5: #00234B;
+    --blue: #2A70C9;
+    --red: #DF6161;
+    --green: #1DB756;
+    --light-red: #FFF2F2;
+    --light-green: #EBFFF3;
+}
+
+/* common ここまで*/
+
+body{
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}
+.for-register {
+    display: none;
+}
+
+.login {
+    width: 100%;
+    max-width: 470px;
+    margin: auto;
+    border-radius: 6px;
+    border: 1px solid var(--color2);
+    background-color: var(--color15);
+    padding: 60px;
+}
+
+.login button {
+    border: none;
+}
+
+.app-title {
+    font-size: 2.25rem;
+    text-align: center;
+    margin-bottom: 4px;
+
+}
+
+.app-sub-title{
+    display: block;
+    margin-bottom: 20px;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    text-align: center;
+}
+.login-explain {
+    color: var(--color4);
+    margin-bottom: 30px;
+}
+
+.switch-wrapper {
+    padding: 4px;
+    border-radius: 10px;
+    max-width: 256px;
+    display: flex;
+    background-color: var(--color2);
+    margin: 0 auto 40px;
+}
+
+.switch-wrapper button {
+    width: 50%;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: transparent;
+}
+
+.switch-wrapper button.selected {
+    background-color: var(--blue);
+    color: var(--color1);
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color4);
+}
+
+form input {
+    display: block;
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background-color: var(--color2);
+    border: none;
+    color:var(--color5)
+}
+
+form input::placeholder{
+    color:var(--color4)
+}
+
+.form-item:not(:last-of-type) {
+    margin-bottom: 20px;
+}
+.form-item:last-of-type{
+    margin-bottom: 50px;
+}
+
+button[type=submit]{
+    width: 100%;
+    display: block;
+    padding: 12px;
+    background-color: var(--blue);
+    border-radius: 6px;
+    color: var(--color1);
+    font-size: 1.125rem;
+}
+
+button[type=submit]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-error {
+    color: var(--red);
+    margin: -20px 0 20px;
+    font-size: 0.9rem;
+}
