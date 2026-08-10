@@ -1,6 +1,6 @@
 import { authHeaders, setSession, logout } from './auth.js';
 
-const API_BASE = 'https://tukudani-mohumohu.onrender.com';
+const API_BASE = 'https://localhost:8000'
 
 // 401（未認証・トークン切れ）が返ってきたら共通でログイン画面に戻す
 async function handleAuthError(res) {
