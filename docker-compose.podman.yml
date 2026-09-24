@@ -1,0 +1,63 @@
+# rootless Podman 用の起動設定。
+#
+# docker-compose.yml との違い（理由は PODMAN_NOTES.md 参照）:
+#   - postgres / frontend のイメージ名をフル修飾（docker.io/library/...）にしている。
+#     rootless Podman はデフォルトの registries.conf に unqualified-search-registries が
+#     設定されておらず、"postgres:16-alpine" のような短縮名は解決できずに失敗するため。
+#   - frontend の公開ポートを 8080 にしている。
+#     rootless Podman は 1024 未満の特権ポートを bind できない
+#     （rootlessport cannot expose privileged port 80 ... permission denied）。
+#
+# 使い方:
+#   podman-compose -f docker-compose.podman.yml up -d --build
+#
+# docker-compose.yml（Docker用）とは合成せず、これ単体で完結したファイルとして使う。
+# podman-composeのオーバーライド結合はリスト値（ports等）を上書きではなく連結してしまう
+# バグがあり、-f docker-compose.yml -f 差分ファイル という重ね方はできないため。
+
+services:
+
+  postgres:
+    image: docker.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pos_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./alembic:/app/alembic
+      - ./alembic.ini:/app/alembic.ini
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/pos_db
+      - SECRET_KEY=dev-secret-key-change-this
+      - DB_HOST=postgres
+      - DB_USER=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    image: docker.io/library/nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+
+volumes:
+  postgres_data:
