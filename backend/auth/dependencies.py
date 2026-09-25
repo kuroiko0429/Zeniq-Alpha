@@ -3,7 +3,12 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 import os
 
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-this")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError(
+        "環境変数 SECRET_KEY が設定されていません。"
+        "docker-compose.yml / .env で必ず設定してください（デフォルト値へのフォールバックは廃止しました）。"
+    )
 ALGORITHM  = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")

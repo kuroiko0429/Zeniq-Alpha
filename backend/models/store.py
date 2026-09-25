@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from database import Base
 
 class Store(Base):
@@ -8,3 +8,4 @@ class Store(Base):
     name          = Column(String, nullable=False)
     username      = Column(String, unique=True, nullable=False)
     hashed_password = Column(String, nullable=False)
+    is_admin      = Column(Boolean, nullable=False, default=False)

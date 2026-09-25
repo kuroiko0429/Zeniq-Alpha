@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # ログインリクエスト
 class LoginRequest(BaseModel):
@@ -13,7 +13,7 @@ class TokenResponse(BaseModel):
 class RegisterRequest(BaseModel):
     name:     str  # 店舗名
     username: str  # ログインID
-    password: str  # パスワード
+    password: str = Field(min_length=8)  # パスワード（8文字以上）
 
 class RegisterResponse(BaseModel):
     id:       int

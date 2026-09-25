@@ -21,10 +21,11 @@ def authenticate(db: Session, username: str, password: str):
         return None
     return store
 
-def create_token(store_id: int, store_name: str):
+def create_token(store_id: int, store_name: str, is_admin: bool = False):
     payload = {
         "store_id":   store_id,
         "store_name": store_name,
+        "is_admin":   is_admin,
         "exp": datetime.utcnow() + timedelta(minutes=EXPIRE_MINUTES)
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)

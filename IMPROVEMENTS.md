@@ -2,23 +2,28 @@
 
 コード全体を読んで見つけた改善点の棚卸しです。優先度高いもの（今すぐ壊れてる／危ない）から並べています。
 
-## 🔥 最優先（実害が出ているバグ）
+## 🔥 最優先（実害が出ているバグ）— ✅ 対応済み
 
-- **`frontend/js/api.js:3` の `API_BASE` が `https://localhost:8000` になっている**
-  backendはTLSなしの素のUvicorn（`http://localhost:8000`）でしか待ち受けていないため、このままでは全APIリクエストが失敗する（接続拒否/SSLエラー）。README上は`http://`と説明されているが実コードは`https://`になっており矛盾している。**最優先で`http://`に修正**（できれば環境変数やビルド時設定で切り替えられるようにする）。
-- **`backend/entrypoint.sh:11` の `python -m alembic upgrade head` が常に失敗する**
-  alembic 1.13.1は`__main__.py`を持たないため`No module named alembic.__main__`で落ち、`|| echo "Warning: ... continuing"`で握りつぶされる。結果、**テーブルが1つも作られないままAPIが起動し**、ログイン等は500になる。`alembic upgrade head`（`-m`なし）に修正する。詳細は`PODMAN_NOTES.md`参照。
-- **`frontend/js/pos.js:358-359` にデバッグ用の `console.log` が残っている**
-  `const data = await getProducts(); console.log(data);` が本番相当のコードにそのまま残っている。削除するか、開発時のみ出るようにする。
+- ~~**`frontend/js/api.js:3` の `API_BASE` が `https://localhost:8000` になっている**~~
+  → `http://localhost:8000` に修正済み。ブラウザで実際にログイン→POSレジ画面遷移まで動作確認済み（`http://localhost:8000/api/auth/login` が200を返すことを確認）。
+- ~~**`backend/entrypoint.sh:11` の `python -m alembic upgrade head` が常に失敗する**~~
+  → `alembic upgrade head`（`-m`なし）に修正済み。DBボリュームを空の状態から起動し、`entrypoint.sh`の自動マイグレーションだけでログインAPIが200/401を正しく返す（500にならない）ことを確認済み。
+- ~~**`frontend/js/pos.js:358-359` にデバッグ用の `console.log` が残っている**~~
+  → 削除済み。ブラウザで`/api/products`へのリクエストが不要な重複なく1回だけ発生することを確認済み。
 
-## 🔒 セキュリティ
+## 🔒 セキュリティ — ✅ 対応済み
 
-- **管理者判定が文字列比較（`store_name == "運営本部"`）に依存している**（`backend/routers/auth.py:30`）。店舗名は`register`で自由に付けられる文字列であり、名前の衝突・変更に弱い。`stores`テーブルに`role`または`is_admin`のbool/enumカラムを持たせ、そちらで判定するべき。
-- **`SECRET_KEY`のデフォルト値がコード（`backend/auth/dependencies.py:6`）と`docker-compose.yml`に平文でハードコードされている**（`dev-secret-key-change-this`）。本番相当で動かす場合は必須環境変数にし、未設定なら起動時に落とすようにしたい。
-- **CORSが全開放**（`backend/main.py:10`、`allow_origins=["*"]` かつ `allow_methods=["*"]`／`allow_headers=["*"]`）。学園祭内LANだけで動かす分には実害は薄いが、外部公開するなら許可オリジンを絞る。
-- **ログインにレート制限がない**。`POST /api/auth/login`は無制限に試行できるため、パスワード総当たりに対して無防備。`slowapi`等でIP/ユーザー単位のレート制限を入れたい。
-- **パスワードの強度チェックが一切ない**（`schemas/auth.py`の`RegisterRequest.password`はただの`str`）。最低文字数程度はバリデーションしたい。
-- **JWTの失効手段がない**（ステートレスJWTのみ、ブラックリスト等なし）。店舗のパスワード変更・アカウント削除後も、有効期限（8時間）内はトークンが使え続ける。学園祭1日運用なら実害は小さいが、明記はしておく。
+- ~~**管理者判定が文字列比較（`store_name == "運営本部"`）に依存している**~~
+  → `stores.is_admin`（Boolean）カラムを追加（`alembic/versions/004_add_is_admin_to_stores.py`、既存の「運営本部」行は自動でis_admin=trueに移行）。JWTペイロードにも`is_admin`を含め、`/api/auth/register`は`is_admin`で判定するよう変更。非admin店舗からの登録試行が403になることを実機確認済み。
+- ~~**`SECRET_KEY`のデフォルト値がハードコードされている**~~
+  → `backend/auth/dependencies.py`でフォールバックを廃止し、未設定なら`RuntimeError`で起動時に落ちるように変更。`SECRET_KEY`なしでコンテナを起動しようとするとエラーで落ちることを確認済み。
+- ~~**CORSが全開放**~~
+  → `backend/main.py`で`CORS_ORIGINS`環境変数（未設定時はlocalhost:80/8080等のデフォルト）による許可オリジンリストに変更。許可オリジン（`http://localhost:8080`）からのプリフライトは200、非許可オリジン（`http://evil.example.com`）からは400になることを確認済み。
+- ~~**ログインにレート制限がない**~~
+  → `slowapi`を導入し、`POST /api/auth/login`にIPごと`10/minute`のレート制限を追加（`backend/rate_limit.py`）。同一IPから11回目のリクエストが429になることを確認済み。
+- ~~**パスワードの強度チェックが一切ない**~~
+  → `schemas/auth.py`の`RegisterRequest.password`に`Field(min_length=8)`を追加。8文字未満での登録が422になることを確認済み。
+- **JWTの失効手段がない**（ステートレスJWTのみ、ブラックリスト等なし）。店舗のパスワード変更・アカウント削除後も、有効期限（8時間）内はトークンが使え続ける。学園祭1日運用なら実害は小さいため、今回は未対応（実装するならRedis等でのブラックリスト管理が必要になり手間が大きい）。
 
 ## 🧱 データ整合性・スキーマ設計
 

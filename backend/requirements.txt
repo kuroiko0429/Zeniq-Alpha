@@ -8,3 +8,4 @@ python-multipart==0.0.9 # フォームデータの受け取り
 bcrypt==4.0.1
 psycopg2-binary==2.9.9 # PostgreSQL driver
 alembic==1.13.1        # Database migrations
+slowapi==0.1.9          # ログインAPIのレート制限

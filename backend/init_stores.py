@@ -11,7 +11,7 @@ if db.query(Store).count() == 0:
     stores = [
         Store(name="焼きそば班",    username="yakisoba",  hashed_password=hash_password("pass1234")),
         Store(name="から揚げ班",    username="karaage",   hashed_password=hash_password("pass1234")),
-        Store(name="運営本部",      username="admin",     hashed_password=hash_password("admin1234")),
+        Store(name="運営本部",      username="admin",     hashed_password=hash_password("admin1234"), is_admin=True),
     ]
     db.add_all(stores)
     db.commit()

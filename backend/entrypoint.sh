@@ -8,7 +8,7 @@ done
 
 echo "Running database migrations..."
 cd /app
-python -m alembic upgrade head || echo "Warning: Migration failed, but continuing..."
+alembic upgrade head || echo "Warning: Migration failed, but continuing..."
 
 echo "Starting FastAPI application..."
 exec uvicorn main:app --host 0.0.0.0 --port 8000 --reload

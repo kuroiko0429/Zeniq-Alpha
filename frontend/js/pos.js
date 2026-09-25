@@ -355,6 +355,3 @@ updatePayButtonsState(); renderTotal();
 window._testState = () => ({ totalPrice, depositMain, depositAdditional, ticketTotalPrice, cartItem });
 // ファイル読み込み時の初期化は上で行っています。
 
-const data=await getProducts()
-console.log(data);
-

@@ -17,12 +17,10 @@
 3. **`backend/entrypoint.sh` の実行権限がリポジトリ上で落ちている**
    `git`上のパーミッションが`-rw-r--r--`（実行不可）になっており、`backend:/app`のbindマウントでイメージ内の`chmod +x`後のファイルを上書きしてしまうため、`OCI permission denied: exec: "./entrypoint.sh"`で起動に失敗する。ローカルで`chmod +x backend/entrypoint.sh`して解消し、そのまま本リポジトリにコミットした（Docker環境でも本来起きうる同種の問題なので、直しておく価値あり）。
 
-## 追加で見つけたバグ（Podmanとは無関係）
+## 追加で見つけたバグ（Podmanとは無関係）— ✅ 修正済み
 
-- `backend/entrypoint.sh` の `python -m alembic upgrade head` は、このalembicバージョン（1.13.1）では `No module named alembic.__main__` で**必ず失敗**し、`|| echo "Warning: ... continuing"` で握りつぶされてそのまま起動してしまう。結果、**DBにテーブルが1つも作られないままAPIが立ち上がり**、`/api/auth/login`等は500 Internal Server Errorになる。
-  - 回避策: コンテナ内で直接 `alembic upgrade head`（`-m`なし。コンソールスクリプトとしては動く）を実行すればマイグレーションは通る。
-  - 今回はコンテナ起動後に手動で `podman exec zeniq-alpha_backend_1 alembic upgrade head` → `python init_stores.py` → `python init_data.py` を実行してから計測した。
-  - `entrypoint.sh`側の恒久修正は未実施（挙動確認・計測が目的のため、このメモに留める）。直すなら11行目を `alembic upgrade head`（`-m`を外す）にすればよいはず。
+- ~~`backend/entrypoint.sh` の `python -m alembic upgrade head` は、このalembicバージョン（1.13.1）では `No module named alembic.__main__` で**必ず失敗**し、`|| echo "Warning: ... continuing"` で握りつぶされてそのまま起動してしまう。結果、**DBにテーブルが1つも作られないままAPIが立ち上がり**、`/api/auth/login`等は500 Internal Server Errorになる。~~
+  → `alembic upgrade head`（`-m`を外す）に修正済み。DBボリュームを空にした状態から起動し直し、手動介入なしで`entrypoint.sh`の自動マイグレーションだけでログインAPIが正しく動く（500ではなく200/401になる）ことを確認済み。
 
 ## 起動手順（Podman）
 
@@ -31,10 +29,10 @@
 chmod +x backend/entrypoint.sh
 
 # 2. Podman専用compose（フル修飾イメージ名・frontend 8080番）で起動
+#    マイグレーションはentrypoint.shが自動で実行する（-m alembic問題は修正済み）
 podman-compose -f docker-compose.podman.yml up -d --build
 
-# 3. マイグレーションが自動で失敗するので手動実行
-podman exec <backendコンテナ名> alembic upgrade head
+# 3. 初期データ投入（初回のみ、テーブルが空の場合に実行される）
 podman exec <backendコンテナ名> python init_stores.py
 podman exec <backendコンテナ名> python init_data.py
 ```
