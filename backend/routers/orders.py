@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 import schemas.order as schemas
 from database import get_db
@@ -17,10 +17,12 @@ def create_order(
 
 @router.get("/api/orders", response_model=list[schemas.OrderResponse])
 def get_orders(
+    limit: int | None = Query(default=None, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
     current_store = Depends(get_current_store)
 ):
-    return order_service.get_all(db, current_store["store_id"])  # ← store_idで絞り込み
+    return order_service.get_all(db, current_store["store_id"], limit=limit, offset=offset)  # ← store_idで絞り込み
 
 @router.put("/api/orders/{order_id}", response_model=schemas.OrderResponse)
 def update_order(

@@ -53,10 +53,13 @@ def create(db: Session, order: schemas.OrderCreate, store_id: int):
     db.refresh(db_order)
     return db_order
  
-def get_all(db: Session, store_id: int):
-    return db.query(models.Order).filter(
+def get_all(db: Session, store_id: int, limit: int | None = None, offset: int = 0):
+    query = db.query(models.Order).filter(
         models.Order.store_id == store_id
-    ).order_by(models.Order.created_at.desc()).all()
+    ).order_by(models.Order.created_at.desc()).offset(offset)
+    if limit is not None:
+        query = query.limit(limit)
+    return query.all()
 
 def get_by_order_no(db: Session, order_no: int, store_id: int):
     order = db.query(models.Order).filter(

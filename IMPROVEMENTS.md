@@ -38,12 +38,16 @@
 - ~~**`ProductCreate`/`OrderItemCreate`に非負制約がない**~~
   → `ProductCreate.price`/`stock`に`Field(ge=0)`、`OrderItemCreate.quantity`に`Field(gt=0)`、`OrderCreate.total`と`OrderPaymentMethodCreate`の各金額フィールドにも`Field(ge=0)`を追加。負の価格・0以下の数量での登録がいずれも422になることを確認済み。
 
-## ⚙️ バックエンド設計
+## ⚙️ バックエンド設計 — ✅ 対応済み
 
-- **`--reload`が本番相当のentrypointでも常に有効**（`backend/entrypoint.sh:14`）。watchfilesのポーリングにより、アイドル時でもbackendコンテナのCPU使用率が約16%と高め（実測、`PODMAN_NOTES.md`参照）。`ENVIRONMENT`環境変数で`--reload`の有無を切り替えるようにする。
-- **`sqlalchemy.ext.declarative.declarative_base`が非推奨API**（`backend/database.py:2`）。SQLAlchemy 2.0では`sqlalchemy.orm.declarative_base`に統合されている。インポート元を差し替えるだけの軽微な修正。
-- **ページネーションが存在しない**（`GET /api/products`, `GET /api/orders`）。学園祭規模なら今すぐ困らないが、件数が増えると全件シリアライズがそのまま重くなる。`limit`/`offset`かカーソルベースの対応を検討。
-- **`backend/routers/products.py`と`orders.py`に例外ハンドリングの層がない**。バリデーションエラーやDB制約違反がFastAPIのデフォルト500として素通しになる箇所が複数ある（上記の商品削除の例など）。共通の例外ハンドラ（`@app.exception_handler`）を`main.py`に追加して、レスポンス形式を統一したい。
+- ~~**`--reload`が本番相当のentrypointでも常に有効**~~
+  → `backend/entrypoint.sh`で`ENVIRONMENT=production`のときだけ`--reload`を外すよう変更（未設定時は従来通り開発モード）。`ENVIRONMENT=production`でコンテナを起動し、`Started reloader process`のログが出なくなることを確認済み。
+- ~~**`sqlalchemy.ext.declarative.declarative_base`が非推奨API**~~
+  → `backend/database.py`のインポート元を`sqlalchemy.orm.declarative_base`に変更。
+- ~~**ページネーションが存在しない**~~
+  → `GET /api/products`・`GET /api/orders`に`limit`（1〜500、省略時は無制限で従来通り全件）・`offset`クエリパラメータを追加。商品一覧は`store_product_no`昇順、注文一覧は従来通り`created_at`降順で決定的にソートした上でoffset/limitを適用。`limit=1&offset=1`で正しく次の1件が返ること、`limit=0`が422になることを確認済み。
+- ~~**`backend/routers/products.py`と`orders.py`に例外ハンドリングの層がない**~~
+  → `main.py`に`IntegrityError`用ハンドラ（409＋サーバーログ出力）と、想定外の例外全般を捕捉する`Exception`ハンドラ（500、スタックトレースを外部に漏らさない）を追加。既存の`HTTPException`（401/403/404/400/409/422等）はFastAPIのデフォルトハンドラが優先されるため動作は変わらない。実機で「同時に同じユーザー名を5並列で登録」を再現し、以前は生の500になっていたはずの競合が、1件成功・4件とも綺麗な409（+サーバーログにWARNING記録）になることを確認済み。
 
 ## 🎨 フロントエンド
 

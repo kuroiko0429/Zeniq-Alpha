@@ -5,8 +5,13 @@ from models.product import Product
 from models.order import OrderItem
 import schemas.product as schemas
 
-def get_all(db: Session, store_id: int):
-    return db.query(Product).filter(Product.store_id == store_id).all()
+def get_all(db: Session, store_id: int, limit: int | None = None, offset: int = 0):
+    query = db.query(Product).filter(
+        Product.store_id == store_id
+    ).order_by(Product.store_product_no).offset(offset)
+    if limit is not None:
+        query = query.limit(limit)
+    return query.all()
 
 def get_by_store_product_no(db: Session, store_product_no: int, store_id: int):
     product = db.query(Product).filter(
