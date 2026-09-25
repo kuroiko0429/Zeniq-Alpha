@@ -1,15 +1,17 @@
 // auth.js
-// ログイン状態（JWTトークン・店舗名）の保存/取得/破棄と、
+// ログイン状態（JWTトークン・店舗名・管理者フラグ）の保存/取得/破棄と、
 // 未ログイン時のリダイレクトをまとめて扱う共通モジュール。
-// index.html / items.html / orders.html / sales.html / login.html から利用する。
+// index.html / items.html / orders.html / sales.html / admin.html / login.html から利用する。
 
 const TOKEN_KEY = 'pos_access_token';
 const STORE_NAME_KEY = 'pos_store_name';
+const IS_ADMIN_KEY = 'pos_is_admin';
 
-// ログイン成功時にトークンと店舗名を保存する
-export function setSession(accessToken, storeName) {
+// ログイン成功時にトークン・店舗名・管理者フラグを保存する
+export function setSession(accessToken, storeName, isAdmin = false) {
     localStorage.setItem(TOKEN_KEY, accessToken);
     localStorage.setItem(STORE_NAME_KEY, storeName);
+    localStorage.setItem(IS_ADMIN_KEY, isAdmin ? '1' : '0');
 }
 
 // 保存されているトークンを取得する（未ログインなら null）
@@ -22,6 +24,11 @@ export function getStoreName() {
     return localStorage.getItem(STORE_NAME_KEY);
 }
 
+// ログイン中の店舗が管理者（運営本部）かどうか
+export function getIsAdmin() {
+    return localStorage.getItem(IS_ADMIN_KEY) === '1';
+}
+
 // ログイン中かどうか
 export function isLoggedIn() {
     return !!getToken();
@@ -31,6 +38,7 @@ export function isLoggedIn() {
 export function clearSession() {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(STORE_NAME_KEY);
+    localStorage.removeItem(IS_ADMIN_KEY);
 }
 
 // ログアウトしてログイン画面へ戻す
@@ -52,6 +60,15 @@ export function logoutWithConfirm() {
 export function requireAuth() {
     if (!isLoggedIn()) {
         location.href = 'login.html';
+    }
+}
+
+// 管理者でなければトップ画面へ戻す。admin.html専用のガード。
+// requireAuth() と同様に、共通ヘッダーより前に呼び出して使う想定。
+export function requireAdmin() {
+    requireAuth();
+    if (!getIsAdmin()) {
+        location.href = 'index.html';
     }
 }
 

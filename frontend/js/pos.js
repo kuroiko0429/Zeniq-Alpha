@@ -1,4 +1,14 @@
 import { getProducts, createOrder } from './api.js';
+import {
+    calcCartTotal,
+    calcMainChange,
+    calcTicketRemaining,
+    calcTicketCashChange,
+    calcTicketShortage,
+    calcTicketShortageDisplay,
+    isExecutePayAvailable,
+    buildPaymentMethod
+} from './pos-calc.js';
 
 
 //エイリアス
@@ -126,7 +136,7 @@ function decreaseItem(id) { const it = cartItem.find(i => i.id === id); if (!it)
 function increaseItem(id) { const it = cartItem.find(i => i.id === id); if (it) { it.num++; renderCartItem(); } }
 function deleteItem(id) { const idx = cartItem.findIndex(i => i.id === id); if (idx !== -1) { cartItem.splice(idx, 1); renderCartItem(); } }
 
-function renderTotal() { totalPrice = 0; cartItem.forEach(i => totalPrice += i.price * i.num); if (totalPriceEle) totalPriceEle.textContent = totalPrice; renderChange(); judgeTicketShortage(); }
+function renderTotal() { totalPrice = calcCartTotal(cartItem); if (totalPriceEle) totalPriceEle.textContent = totalPrice; renderChange(); judgeTicketShortage(); }
 
 // deposit inputs
 const depositInput = document.querySelector('.pay-how-detail-cash .deposit-input-area input'); if (depositInput) { clampNumberInputToZero(depositInput); depositInput.addEventListener('input', function () { depositMain = Number(this.value) || 0; renderChange(); }); }
@@ -134,8 +144,7 @@ const cashForTicketDepositInput = document.querySelector('.cash-for-ticket .for-
 
 function renderChange() {
     // main の預り金は depositMain のみとする（模擬券用の depositAdditional は別扱い）
-    const depositPrice = (depositMain || 0);
-    const change = depositPrice - (totalPrice || 0);
+    const change = calcMainChange(depositMain, totalPrice);
     if (change < 0) {
         if (depositMsg) { depositMsg.classList.add('is-displayed'); depositMsg.textContent = '預り金が不足しています'; }
         if (mainChangeResult) mainChangeResult.style.color = 'var(--red)';
@@ -149,10 +158,9 @@ function renderChange() {
         const forTicketChangePrice = cashForTicket.querySelector('.for-ticket-change-price');
         const forTicketChangeResult = cashForTicket.querySelector('.for-ticket-change-result');
         const forTicketShortageMsg = cashForTicket.querySelector('.for-ticket-deposit-shortage-msg');
-        // remaining = total - ticketTotal
-        const remaining = (totalPrice || 0) - (ticketTotalPrice || 0);
+        const remaining = calcTicketRemaining(totalPrice, ticketTotalPrice);
         // display = depositAdditional - remaining (正ならお釣り、負なら不足)
-        const forTicketDisplay = (depositAdditional || 0) - (remaining > 0 ? remaining : 0);
+        const forTicketDisplay = calcTicketCashChange(depositAdditional, remaining);
         if (forTicketChangePrice) forTicketChangePrice.textContent = forTicketDisplay;
         if (forTicketChangeResult) {
             forTicketChangeResult.textContent = `￥ ${forTicketDisplay}`;
@@ -179,23 +187,8 @@ const ticketShortagePriceEle = $('.ticket-shortage-price');
 function updateTicketTotal(value) { ticketTotalPrice = value; if (ticketTotalPriceEle) ticketTotalPriceEle.textContent = ticketTotalPrice; judgeTicketShortage(); }
 function renderTicketShortagePrice() {
     if (!ticketShortagePriceEle) return;
-    const baseShortage = (ticketTotalPrice || 0) - (totalPrice || 0); // 負なら不足
     const shortageEl = $('.ticket-shortage');
-    let displayValue;
-
-    if (baseShortage >= 0) {
-        // 模擬券だけで足りている
-        displayValue = 0;
-    } else if (addPayHowSelected === 'qr') {
-        // QR追加選択時は不足0
-        displayValue = 0;
-    } else if (addPayHowSelected === 'cash') {
-        // 現金追加選択時：残不足 = baseShortage + depositAdditional（0より大きくはしない）
-        const remaining = baseShortage + (depositAdditional || 0);
-        displayValue = Math.min(remaining, 0);
-    } else {
-        displayValue = baseShortage;
-    }
+    const displayValue = calcTicketShortageDisplay({ ticketTotalPrice, totalPrice, addPayHowSelected, depositAdditional });
 
     ticketShortagePriceEle.textContent = displayValue;
     if (shortageEl) {
@@ -204,7 +197,7 @@ function renderTicketShortagePrice() {
 }
 
 function judgeTicketShortage() {
-    const shortage = (ticketTotalPrice || 0) - (totalPrice || 0); // 正なら余剰、負なら不足
+    const shortage = calcTicketShortage(ticketTotalPrice, totalPrice); // 正なら余剰、負なら不足
     if (shortage < 0) {
         // 不足あり：オーバーレイ非表示
         ticketShortageAreaOverlay.style.display = 'none';
@@ -234,23 +227,10 @@ async function onExecute() {
     }));
 
     // 支払い方法ごとに payment_method オブジェクトを組み立てる
-    let paymentMethod;
-    if (currentPayHow === 'cash') {
-        paymentMethod = { cash: depositMain, ticket_100: 0, ticket_200: 0, emoney: 0 };
-    } else if (currentPayHow === 'ticket') {
-        const remaining = (totalPrice || 0) - (ticketTotalPrice || 0);
-        const shortagePay = remaining > 0 ? remaining : 0;
-        paymentMethod = {
-            cash: addPayHowSelected === 'cash' ? depositAdditional : 0,
-            ticket_100: ticket100,
-            ticket_200: ticket200,
-            emoney: addPayHowSelected === 'qr' ? shortagePay : 0
-        };
-    } else if (currentPayHow === 'qr') {
-        paymentMethod = { cash: 0, ticket_100: 0, ticket_200: 0, emoney: totalPrice };
-    } else {
-        paymentMethod = { cash: 0, ticket_100: 0, ticket_200: 0, emoney: 0 };
-    }
+    const paymentMethod = buildPaymentMethod({
+        currentPayHow, depositMain, ticket100, ticket200,
+        addPayHowSelected, depositAdditional, totalPrice, ticketTotalPrice
+    });
 
     // ボタン連打防止（通信中は無効化）
     if (executePayBtn) {
@@ -306,38 +286,10 @@ function updateExecutePayButtonState() {
     executePayBtn.classList.remove('is-available');
     executePayBtn.onclick = null;
 
-    // カートが空なら無条件で無効
-    if (cartItem.length === 0) return;
-
-    // 条件判定に必要な値を計算
-    const mainChange = ((depositMain || 0) - (totalPrice || 0));
-    const shortage = (ticketTotalPrice || 0) - (totalPrice || 0); // 正なら模擬券が余分、負なら不足
-    // remaining = total - ticketTotalPrice
-    const remaining = (totalPrice || 0) - (ticketTotalPrice || 0);
-    // forTicketDisplay は模擬券追加の預り金表示（depositAdditional - remaining）
-    const forTicketDisplay = (depositAdditional || 0) - (remaining > 0 ? remaining : 0);
-
-    let available = false;
-
-    if (currentPayHow === 'cash') {
-        // 現金選択でお釣りが0以上
-        if (mainChange >= 0) available = true;
-    } else if (currentPayHow === 'ticket') {
-        // 模擬券選択
-        // 模擬券の不足額が無い（shortage >= 0） -> 会計可能
-        if (shortage >= 0) available = true;
-        else {
-            // 不足がある場合、追加支払が現金でその現金側でお釣りが0以上
-            if (addPayHowSelected === 'cash') {
-                if (forTicketDisplay >= 0) available = true; // 模擬券側でお釣りが0以上
-            }
-            // あるいは追加支払が QR の場合は可
-            if (addPayHowSelected === 'qr') available = true;
-        }
-    } else if (currentPayHow === 'qr') {
-        // QR 決済は常に可
-        available = true;
-    }
+    const available = isExecutePayAvailable({
+        cartItem, currentPayHow, depositMain, totalPrice,
+        ticketTotalPrice, addPayHowSelected, depositAdditional
+    });
 
     if (available) {
         executePayBtn.classList.add('is-available');

@@ -1,0 +1,9 @@
+{
+  "name": "zeniq-alpha-frontend",
+  "private": true,
+  "type": "module",
+  "description": "ビルド不要の素のHTML/CSS/JSフロントエンド。単体テストのみbunを使う。",
+  "scripts": {
+    "test": "bun test"
+  }
+}

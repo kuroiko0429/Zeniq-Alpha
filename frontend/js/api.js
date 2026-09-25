@@ -1,6 +1,7 @@
 import { authHeaders, setSession, logout } from './auth.js';
 
-const API_BASE = 'http://localhost:8000'
+// config.js（window.__ENV__）で上書きできる。未設定時はローカル開発用のデフォルト。
+const API_BASE = (typeof window !== 'undefined' && window.__ENV__?.API_BASE) || 'http://localhost:8000';
 
 // 401（未認証・トークン切れ）が返ってきたら共通でログイン画面に戻す
 async function handleAuthError(res) {
@@ -32,7 +33,7 @@ export async function login(username, password) {
     }
 
     const data = await res.json();
-    setSession(data.access_token, data.store_name);
+    setSession(data.access_token, data.store_name, data.is_admin);
     return data;
 }
 
@@ -55,7 +56,12 @@ export async function register(name, username, password) {
     }
     if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || '新規登録に失敗しました');
+        // pydanticのバリデーションエラー（422）は detail が配列になるため、
+        // 文字列（HTTPExceptionからのdetail）と配列の両方に対応する。
+        const detail = Array.isArray(err.detail)
+            ? err.detail.map((e) => e.msg).join(' / ')
+            : err.detail;
+        throw new Error(detail || '新規登録に失敗しました');
     }
     return res.json();
 }

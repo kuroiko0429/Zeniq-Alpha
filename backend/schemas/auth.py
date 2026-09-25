@@ -9,6 +9,7 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     store_name:   str
+    is_admin:     bool
 
 class RegisterRequest(BaseModel):
     name:     str  # 店舗名

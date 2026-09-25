@@ -21,7 +21,7 @@ def login(
     if not store:
         raise HTTPException(status_code=401, detail="ユーザー名またはパスワードが正しくありません")
     token = auth_service.create_token(store.id, store.name, store.is_admin)
-    return {"access_token": token, "store_name": store.name}
+    return {"access_token": token, "store_name": store.name, "is_admin": store.is_admin}
 
 @router.post("/api/auth/register", response_model=auth_schemas.RegisterResponse)
 def register(

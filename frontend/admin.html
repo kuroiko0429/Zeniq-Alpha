@@ -1,15 +1,65 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS 管理画面</title>
-    <link rel="stylesheet" href="css/style.css">
 
-    <link rel="icon" href="img/Group 49.png">
-</head>
-<body>
-    <h1>管理画面（実装予定）</h1>
-    <p>商品登録・売上確認はここに実装します。</p>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>管理画面|学祭用POSレジ</title>
+
+        <!-- リセットCSS -->
+        <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+        <!-- Google fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <!-- css -->
+        <link rel="stylesheet" href="css/header.css">
+        <link rel="stylesheet" href="css/admin.css">
+
+        <link rel="icon" href="img/Group 49.png">
+    </head>
+
+    <body>
+
+        <main>
+            <div class="container">
+                <h2 class="page-title">管理画面</h2>
+                <p class="page-explain">
+                    新しい店舗のアカウントを作成します。運営本部（管理者）アカウントのみ利用できます。
+                </p>
+
+                <section class="admin-card">
+                    <h3 class="admin-card-title">店舗を新規登録</h3>
+
+                    <form id="register-form">
+                        <div class="form-item">
+                            <label for="register-name">お店の名前</label>
+                            <input type="text" id="register-name" placeholder="例）たこ焼き屋"
+                                autocomplete="organization" required>
+                        </div>
+                        <div class="form-item">
+                            <label for="register-username">ユーザー名</label>
+                            <input type="text" id="register-username" placeholder="例）takoyaki"
+                                autocomplete="username" required>
+                        </div>
+                        <div class="form-item">
+                            <label for="register-password">パスワード</label>
+                            <input type="password" id="register-password" placeholder="8文字以上"
+                                autocomplete="new-password" minlength="8" required>
+                        </div>
+
+                        <p class="form-error" id="register-error" hidden></p>
+
+                        <button type="submit" id="register-submit">店舗を登録</button>
+                    </form>
+                </section>
+            </div>
+        </main>
+
+        <script src="js/config.js"></script>
+        <script type="module" src="js/header.js"></script>
+        <script type="module" src="js/admin.js"></script>
+        <script src="js/toast.js"></script>
+    </body>
+
 </html>
