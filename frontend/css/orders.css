@@ -1,87 +1,52 @@
-html {
-    font-size: 100%;
-}
+/* orders.css — 会計履歴画面（Material 3 Expressive） */
 
-body {
-    background-color: var(--color1);
-    color: var(--color5);
-    min-height: 100vh;
-}
+/* html/body/img/ul/a/button の共通リセット・:root は m3-tokens.css へ移動済み */
 
-img {
-    vertical-align: bottom;
-}
-
-ul {
-    list-style: none;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button {
-    color: inherit;
-}
-
-:root {
-    --color1: #F8FCFF;
-    --color15: #EEF8FF;
-    --color2: #DBECF9;
-    --color3: #C9D8E4;
-    --color4: #56708D;
-    --color5: #00234B;
-    --blue: #2A70C9;
-    --red: #DF6161;
-    --green: #1DB756;
-    --light-red: #FFF2F2;
-    --light-green: #EBFFF3;
-}
-
-/* common ここまで*/
 .container {
-    max-width: 900px;
-    padding: 0 16px;
+    max-width: 960px;
+    padding: 0 24px;
     margin: 0 auto;
 }
 
 .page-title {
     font-weight: 700;
-    font-size: 1.625rem;
+    font-size: 1.75rem;
     margin-bottom: 24px;
     margin-top: 32px;
+    color: var(--m3-on-surface);
 }
 
 .switch-term-area {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     justify-content: right;
     margin-bottom: 18px;
 }
 
 .switch-term-area button {
-    border-radius: 6px;
-    background-color: var(--color2);
-    width: 90px;
+    border-radius: var(--m3-shape-full);
+    background-color: var(--m3-surface-container-highest);
+    color: var(--m3-on-surface-variant);
+    width: 96px;
     padding: 10px;
     text-align: center;
-    font-size: 1rem;
-
+    font-size: 0.9375rem;
+    font-weight: 700;
 }
 
 .search-area {
-    padding: 22px 20px;
-    border-radius: 6px;
-    background-color: var(--color15);
-    border: 1px solid var(--color2);
-    margin-bottom: 80px;
+    padding: 24px 24px;
+    border-radius: var(--m3-shape-xl);
+    background-color: var(--m3-surface-container-low);
+    border: 1px solid var(--m3-outline-variant);
+    margin-bottom: 60px;
 }
 
 .search-area-title {
     font-weight: 700;
     font-size: 1rem;
     margin-bottom: 20px;
+    color: var(--m3-on-surface);
 }
 
 .search-item-list {
@@ -96,18 +61,31 @@ button {
 }
 
 .search-item label {
-    color: var(--color4);
+    color: var(--m3-on-surface-variant);
     margin-bottom: 8px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    display: block;
 }
 
 .search-item input,
 .search-item select {
-    background-color: var(--color2);
-    font-size: 1rem;
+    background-color: var(--m3-surface-container-highest);
+    color: var(--m3-on-surface);
+    font-size: 0.9375rem;
     padding: 12px 16px;
-    border-radius: 6px;
+    border: none;
+    border-bottom: 2px solid var(--m3-outline);
+    border-radius: var(--m3-shape-xs) var(--m3-shape-xs) 0 0;
     display: block;
     width: 100%;
+    transition: border-color var(--m3-duration-short) var(--m3-ease-standard);
+}
+
+.search-item input:focus,
+.search-item select:focus {
+    outline: none;
+    border-bottom-color: var(--m3-primary);
 }
 
 .item-search-area {
@@ -115,42 +93,48 @@ button {
 }
 
 .item-search-checks {
-    border-radius: 6px;
-    background-color: var(--color2);
-    padding: 14px 20px;
+    border-radius: var(--m3-shape-lg);
+    background-color: var(--m3-surface-container-highest);
+    padding: 16px 20px;
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
 }
 
 .item-search-checks-title {
     margin-bottom: 8px;
     display: block;
+    color: var(--m3-on-surface-variant);
+    font-size: 0.8125rem;
+    font-weight: 700;
 }
 
 .search-clear-btn {
     font-weight: 700;
-    color: var(--color1);
-    background-color: var(--color4);
-    font-size: 1.125rem;
-    padding: 8px;
-    border-radius: 6px;
+    color: var(--m3-on-surface-variant);
+    background-color: transparent;
+    border: 1px solid var(--m3-outline);
+    font-size: 0.9375rem;
+    padding: 10px 20px;
+    border-radius: var(--m3-shape-full);
+    position: relative;
+    overflow: hidden;
 }
 
 
 /*各アイテム*/
 .order-list {
     margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .order {
-    background-color: var(--color15);
-    padding: 15px;
-    border-radius: 6px;
-
-}
-
-.order:not(:last-child) {
-    margin-bottom: 20px;
+    background-color: var(--m3-surface-container-low);
+    padding: 20px 22px;
+    border-radius: var(--m3-shape-xl);
+    box-shadow: var(--m3-elevation-1);
 }
 
 .order-head {
@@ -163,32 +147,37 @@ button {
 .order-date {
     margin-bottom: 2px;
     font-size: 0.9375rem;
-    font-weight: 500;
+    font-weight: 700;
+    color: var(--m3-on-surface);
 }
 
 .order-id {
-    color: var(--color4);
-    font-size: 0.9375rem;
+    color: var(--m3-on-surface-variant);
+    font-size: 0.875rem;
 }
 
 .order-head-right {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: flex-start;
 }
 
 .edit-order-btn {
-    background-color: var(--blue);
-    padding: 8px;
-    border-radius: 6px;
+    background-color: var(--m3-secondary);
+    padding: 10px;
+    border-radius: var(--m3-shape-full);
     display: block;
+    position: relative;
+    overflow: hidden;
 }
 
 .delete-order-btn {
-    background-color: var(--red);
-    padding: 8px;
-    border-radius: 6px;
+    background-color: var(--m3-error);
+    padding: 10px;
+    border-radius: var(--m3-shape-full);
     display: block;
+    position: relative;
+    overflow: hidden;
 }
 
 .edit-order-btn img,
@@ -205,17 +194,19 @@ button {
 }
 
 .order-body-subtitle {
-    color: var(--color4);
+    color: var(--m3-on-surface-variant);
     margin-bottom: 8px;
+    font-size: 0.8125rem;
+    font-weight: 700;
 }
 
 .order-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: 1px solid var(--color2);
+    padding: 12px 18px;
+    border-radius: var(--m3-shape-md);
+    background-color: var(--m3-surface-container-highest);
 }
 
 .order-item:not(:last-child) {
@@ -224,34 +215,36 @@ button {
 
 .order-item-name {
     font-weight: 500;
+    color: var(--m3-on-surface);
 }
 
 .order-item-sum {
-    font-weight: 500;
+    font-weight: 700;
     font-size: 1.25rem;
-    color: var(--blue);
+    color: var(--m3-primary);
 }
 
 .order-how {
-    padding: 10px 20px;
-    border-radius: 6px;
-    border: 1px solid var(--color2);
-    font-weight: 500;
+    padding: 12px 18px;
+    border-radius: var(--m3-shape-md);
+    background-color: var(--m3-tertiary-container);
+    color: var(--m3-on-tertiary-container);
+    font-weight: 700;
 }
 
 .order-sum {
-    padding: 6px 0;
+    padding: 8px 0;
     font-size: 1.5rem;
-    font-weight: 900;
-    color: var(--blue);
+    font-weight: 700;
+    color: var(--m3-primary);
 }
 
 
 /* 編集時 */
 .order-item-list-area-edit {
-    background-color: var(--color2);
-    padding: 12px;
-    border-radius: 6px;
+    background-color: var(--m3-surface-container-highest);
+    padding: 14px;
+    border-radius: var(--m3-shape-lg);
 }
 
 .order-item-edit-row {
@@ -267,98 +260,131 @@ button {
 
 .order-item-num-edit-area span {
     flex-shrink: 0;
+    color: var(--m3-on-surface-variant);
 }
 
 .order-item-name-select {
-    background-color: var(--color15);
+    background-color: var(--m3-surface-container-lowest);
+    color: var(--m3-on-surface);
     width: 100%;
     display: block;
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 10px 12px;
+    border-radius: var(--m3-shape-sm);
+    border: 1px solid var(--m3-outline-variant);
     font-weight: 500;
     margin-bottom: 10px;
 }
 
 .delete-item-row-btn {
-    background-color: var(--red);
+    background-color: var(--m3-error);
     padding: 8px;
-    border-radius: 6px;
+    border-radius: var(--m3-shape-full);
     display: block;
+    position: relative;
+    overflow: hidden;
 }
-.delete-item-row-btn img{
+
+.delete-item-row-btn img {
     display: block;
     width: 20px;
     aspect-ratio: 1/1;
 }
-.order-item-num-input{
-    padding: 2px 6px;
-    background-color: var(--color15);
+
+.order-item-num-input {
+    padding: 6px 10px;
+    background-color: var(--m3-surface-container-lowest);
+    color: var(--m3-on-surface);
     width: 5rem;
     font-weight: 500;
+    border-radius: var(--m3-shape-sm);
+    border: 1px solid var(--m3-outline-variant);
 }
-.order-item-select-and-num{
+
+.order-item-select-and-num {
     width: 100%;
 }
-.confirm-order-btn{
-    padding: 6px;
+
+.confirm-order-btn {
+    padding: 10px;
     display: block;
-    background-color: var(--green);
-    border-radius: 6px;
+    background-color: var(--m3-success);
+    border-radius: var(--m3-shape-full);
+    position: relative;
+    overflow: hidden;
 }
-.confirm-order-btn img{
+
+.confirm-order-btn img {
     width: 23px;
     aspect-ratio: 1/1;
 }
-.cancel-order-btn{
-    padding: 6px;
-    border-radius: 6px;
-    background-color: var(--color4);
+
+.cancel-order-btn {
+    padding: 10px;
+    border-radius: var(--m3-shape-full);
+    background-color: var(--m3-on-surface-variant);
     display: block;
     aspect-ratio: 1/1;
+    position: relative;
+    overflow: hidden;
 }
-.cancel-order-btn img{
+
+.cancel-order-btn img {
     width: 23px;
     aspect-ratio: 1/1;
 }
-.add-item-btn{
-    padding: 6px 12px;
-    border-radius: 6px;
-    background-color: var(--blue);
-    font-weight: 500;
-    color: var(--color1);
+
+.add-item-btn {
+    padding: 10px 16px;
+    border-radius: var(--m3-shape-full);
+    background-color: var(--m3-primary);
+    font-weight: 700;
+    color: var(--m3-on-primary);
+    position: relative;
+    overflow: hidden;
 }
-.order-how-select{
-    padding: 8px 12px;
-    background-color: var(--color2);
+
+.order-how-select {
+    padding: 10px 12px;
+    background-color: var(--m3-surface-container-lowest);
+    color: var(--m3-on-surface);
     font-weight: 500;
-    border-radius: 6px;
+    border-radius: var(--m3-shape-sm);
+    border: 1px solid var(--m3-outline-variant);
     display: block;
     width: 100%;
     margin-bottom: 10px;
 }
-.order-ticket{
-    color: var(--color4);
+
+.order-ticket {
+    color: var(--m3-on-surface-variant);
     font-size: 1rem;
     margin-top: 6px;
 }
-.order-ticket-edit label{
+
+.order-ticket-edit label {
     margin-bottom: 8px;
     font-weight: 500;
     display: flex;
+    color: var(--m3-on-surface);
 }
-.order-ticket-edit label span{
+
+.order-ticket-edit label span {
     flex-shrink: 0;
 }
-.order-ticket-edit label input{
+
+.order-ticket-edit label input {
     display: block;
     width: 100%;
-    padding: 2px 6px;
-    background-color: var(--color2);
+    padding: 6px 10px;
+    background-color: var(--m3-surface-container-lowest);
+    color: var(--m3-on-surface);
     font-weight: 500;
+    border-radius: var(--m3-shape-sm);
+    border: 1px solid var(--m3-outline-variant);
 }
 
 /* 日別 全期間 切り替え */
-.switch-term-area button.isSelected{
-    background-color: var(--blue);
-    color: var(--color1);
+.switch-term-area button.isSelected {
+    background-color: var(--m3-primary);
+    color: var(--m3-on-primary);
 }

@@ -1,0 +1,207 @@
+/*
+ * m3-tokens.css
+ * ==============
+ * Material 3 Expressive デザイントークン。
+ * 色ロール・シェイプ（角丸）・タイポスケール・elevation・モーションを
+ * すべてこのファイルに集約する。全HTMLで最初に読み込むこと。
+ *
+ * 既存の各画面CSS（style.css / items.css / orders.css / sales.css /
+ * login.css / admin.css）は --blue / --color1〜5 / --red / --green 等の
+ * 変数名をそのまま参照しているため、ここではM3のロールトークンに加えて
+ * 「旧変数名 → M3ロールのエイリアス」も定義する。これにより各画面CSS側の
+ * :root再定義を削除するだけで、全ページの配色が一括でM3化される。
+ *
+ * ブランドカラー（元の --blue: #2A70C9）をSource Colorとして、
+ * Material Color Utilities（HCT）のトーン設計に沿った類似のライト
+ * カラースキームを手動で構成している。
+ */
+
+@charset "UTF-8";
+
+/* ---------- Web Fonts ----------
+ * Roboto Flex: M3標準の可変フォント（ラテン文字・数字）。
+ * Noto Sans JP: 日本語文字はRoboto Flexがカバーしないため、
+ * フォールバックとして引き続き使用する（文字種ごとに自動でフォールバックされる）。
+ */
+
+:root {
+  /* ============ M3 カラーロール（ライトスキーム） ============ */
+
+  /* Primary（ブランドの青。主要アクション・強調） */
+  --m3-primary: #2E5EA8;
+  --m3-on-primary: #FFFFFF;
+  --m3-primary-container: #D6E3FF;
+  --m3-on-primary-container: #001B3D;
+
+  /* Secondary（青みグレー。補助アクション） */
+  --m3-secondary: #56708D;
+  --m3-on-secondary: #FFFFFF;
+  --m3-secondary-container: #DBECF9;
+  --m3-on-secondary-container: #101C2B;
+
+  /* Tertiary（紫〜プラム。Expressiveらしい差し色。売上・強調バッジ等） */
+  --m3-tertiary: #7C5295;
+  --m3-on-tertiary: #FFFFFF;
+  --m3-tertiary-container: #F6D9FF;
+  --m3-on-tertiary-container: #300F45;
+
+  /* Error */
+  --m3-error: #BA1A1A;
+  --m3-on-error: #FFFFFF;
+  --m3-error-container: #FFDAD6;
+  --m3-on-error-container: #410002;
+
+  /* Success（M3標準ロールではないが、会計・在庫アプリで多用するため独自定義） */
+  --m3-success: #1B8E4B;
+  --m3-on-success: #FFFFFF;
+  --m3-success-container: #B4F2C4;
+  --m3-on-success-container: #002109;
+
+  /* Neutral / Surface */
+  --m3-surface: #F8FBFF;
+  --m3-surface-dim: #D7DEE7;
+  --m3-surface-bright: #F8FBFF;
+  --m3-surface-container-lowest: #FFFFFF;
+  --m3-surface-container-low: #F1F5FB;
+  --m3-surface-container: #EBF1F9;
+  --m3-surface-container-high: #E4EBF5;
+  --m3-surface-container-highest: #DBECF9;
+  --m3-on-surface: #101C2B;
+  --m3-on-surface-variant: #44536A;
+  --m3-outline: #74839B;
+  --m3-outline-variant: #C4D0E0;
+  --m3-inverse-surface: #1E3049;
+  --m3-inverse-on-surface: #EEF3FF;
+  --m3-inverse-primary: #ABC7FF;
+  --m3-scrim: #000000;
+  --m3-shadow: #0B1A2E;
+
+  /* ============ 旧変数名 → M3ロールのエイリアス ============
+   * 各画面CSSが参照している変数名はそのまま残し、値だけM3ロールへ委譲する。
+   */
+  --color1: var(--m3-surface);
+  --color15: var(--m3-surface-container);
+  --color2: var(--m3-surface-container-highest);
+  --color3: var(--m3-outline-variant);
+  --color4: var(--m3-on-surface-variant);
+  --color5: var(--m3-on-surface);
+  --blue: var(--m3-primary);
+  --red: var(--m3-error);
+  --green: var(--m3-success);
+  --light-red: var(--m3-error-container);
+  --light-green: var(--m3-success-container);
+
+  /* ============ シェイプスケール ============
+   * Expressiveは角丸を大胆に使う。ボタンはpill、カードは大きめの角丸。
+   */
+  --m3-shape-none: 0px;
+  --m3-shape-xs: 8px;
+  --m3-shape-sm: 12px;
+  --m3-shape-md: 16px;
+  --m3-shape-lg: 20px;
+  --m3-shape-xl: 28px;
+  --m3-shape-full: 999px;
+
+  /* ============ Elevation（トーン＋シャドウの階層） ============ */
+  --m3-elevation-0: none;
+  --m3-elevation-1: 0 1px 2px rgba(11, 26, 46, 0.30), 0 1px 3px 1px rgba(11, 26, 46, 0.15);
+  --m3-elevation-2: 0 1px 2px rgba(11, 26, 46, 0.30), 0 2px 6px 2px rgba(11, 26, 46, 0.15);
+  --m3-elevation-3: 0 4px 8px 3px rgba(11, 26, 46, 0.15), 0 1px 3px rgba(11, 26, 46, 0.30);
+  --m3-elevation-4: 0 6px 10px 4px rgba(11, 26, 46, 0.15), 0 2px 3px rgba(11, 26, 46, 0.30);
+  --m3-elevation-5: 0 8px 12px 6px rgba(11, 26, 46, 0.15), 0 4px 4px rgba(11, 26, 46, 0.30);
+
+  /* ============ モーション ============
+   * Expressiveの「跳ねる」質感は --m3-ease-bounce（オーバーシュートするスプリング風）で表現する。
+   */
+  --m3-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --m3-ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --m3-ease-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --m3-ease-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --m3-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --m3-duration-short: 150ms;
+  --m3-duration-medium: 300ms;
+  --m3-duration-long: 500ms;
+
+  /* ============ State layer（hover/focus/press時のオーバーレイ不透明度） ============ */
+  --m3-state-hover: 0.08;
+  --m3-state-focus: 0.12;
+  --m3-state-press: 0.12;
+
+  /* ============ タイポグラフィ ============ */
+  --m3-font: "Roboto Flex", "Noto Sans JP", sans-serif;
+}
+
+/* ============ 共通ベーススタイル ============
+ * 各画面CSSが個別に持っていた html/body/img/ul/a/button/* リセットを集約。
+ */
+html {
+  font-size: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--m3-surface);
+  color: var(--m3-on-surface);
+  font-family: var(--m3-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  vertical-align: bottom;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  color: inherit;
+  font-family: var(--m3-font);
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: var(--m3-font);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--m3-outline-variant);
+}
+
+/* ============ タイプスケール ユーティリティ ============ */
+.m3-display-large { font-size: 3.5625rem; line-height: 4rem; font-weight: 400; }
+.m3-display-medium { font-size: 2.8125rem; line-height: 3.25rem; font-weight: 400; }
+.m3-display-small { font-size: 2.25rem; line-height: 2.75rem; font-weight: 400; }
+.m3-headline-large { font-size: 2rem; line-height: 2.5rem; font-weight: 500; }
+.m3-headline-medium { font-size: 1.75rem; line-height: 2.25rem; font-weight: 500; }
+.m3-headline-small { font-size: 1.5rem; line-height: 2rem; font-weight: 500; }
+.m3-title-large { font-size: 1.375rem; line-height: 1.75rem; font-weight: 500; }
+.m3-title-medium { font-size: 1rem; line-height: 1.5rem; font-weight: 700; letter-spacing: .009375rem; }
+.m3-title-small { font-size: 0.875rem; line-height: 1.25rem; font-weight: 700; letter-spacing: .00625rem; }
+.m3-label-large { font-size: 0.875rem; line-height: 1.25rem; font-weight: 700; letter-spacing: .00625rem; }
+.m3-label-medium { font-size: 0.75rem; line-height: 1rem; font-weight: 700; letter-spacing: .03125rem; }
+.m3-label-small { font-size: 0.6875rem; line-height: 1rem; font-weight: 700; letter-spacing: .03125rem; }
+.m3-body-large { font-size: 1rem; line-height: 1.5rem; font-weight: 400; letter-spacing: .03125rem; }
+.m3-body-medium { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; letter-spacing: .015625rem; }
+.m3-body-small { font-size: 0.75rem; line-height: 1rem; font-weight: 400; letter-spacing: .025rem; }
+
+/* ============ Elevation ユーティリティ ============ */
+.m3-elevation-0 { box-shadow: var(--m3-elevation-0); }
+.m3-elevation-1 { box-shadow: var(--m3-elevation-1); }
+.m3-elevation-2 { box-shadow: var(--m3-elevation-2); }
+.m3-elevation-3 { box-shadow: var(--m3-elevation-3); }

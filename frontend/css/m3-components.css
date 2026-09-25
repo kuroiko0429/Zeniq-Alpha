@@ -1,0 +1,169 @@
+/*
+ * m3-components.css
+ * ==================
+ * 全画面共通のインタラクション・アクセシビリティレイヤー。
+ * m3-tokens.css の後、各画面固有CSSの前に読み込むこと。
+ *
+ * 各画面固有のボタン/カード/フォームの「見た目」は引き続き
+ * style.css / items.css / orders.css / sales.css / login.css / admin.css
+ * 側で定義するが、以下の「触った時の質感」（フォーカスリング・押下時の
+ * スケール・リップル用のstate-layer）はここに一元化する。
+ */
+
+/* ============ フォーカスリング（キーボード操作時のアクセシビリティ） ============ */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--m3-primary);
+  outline-offset: 2px;
+  border-radius: var(--m3-shape-xs);
+}
+
+/* ============ 押下時の触感（Expressiveのバウンド感） ============
+ * クリック可能な要素全般に、押した瞬間わずかに縮む動きを与える。
+ * disabled要素には適用しない。
+ */
+button:not(:disabled),
+.m3-interactive {
+  transition: transform var(--m3-duration-short) var(--m3-ease-standard),
+              box-shadow var(--m3-duration-short) var(--m3-ease-standard),
+              background-color var(--m3-duration-short) var(--m3-ease-standard);
+}
+
+button:not(:disabled):active,
+.m3-interactive:active {
+  transform: scale(0.96);
+  transition: transform var(--m3-duration-short) var(--m3-ease-bounce);
+}
+
+/* ============ リップル（M3シグネチャーの波紋クリックフィードバック） ============
+ * js/ripple.js が要素にクリック時 .m3-ripple-wave を動的挿入して使う。
+ * 対象要素側には position:relative; overflow:hidden; が必要
+ * （ripple.jsが自動付与する）。
+ */
+.m3-ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.25;
+  transform: scale(0);
+  pointer-events: none;
+  animation: m3-ripple-spread 550ms var(--m3-ease-emphasized-decelerate) forwards;
+}
+
+@keyframes m3-ripple-spread {
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* ============ トースト（toast.js が注入するCSSをM3トークンで上書き） ============ */
+#toast-container {
+  --toast-gap: 12px;
+}
+
+.toast {
+  font-family: var(--m3-font);
+  border-radius: var(--m3-shape-md) !important;
+  box-shadow: var(--m3-elevation-3) !important;
+  font-weight: 500 !important;
+  border: none !important;
+  backdrop-filter: blur(2px);
+}
+
+.toast-success {
+  color: var(--m3-on-success-container) !important;
+  background-color: var(--m3-success-container) !important;
+}
+
+.toast-error {
+  color: var(--m3-on-error-container) !important;
+  background-color: var(--m3-error-container) !important;
+}
+
+/* ============ スクロールバー（カート等の縦スクロール領域を上品に） ============ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--m3-outline-variant) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--m3-outline-variant);
+  border-radius: var(--m3-shape-full);
+}
+
+/* ============ 汎用 M3 コンポーネントクラス ============
+ * 新規実装（admin.htmlのボタン等）や、今後の画面追加時に使えるプリミティブ。
+ */
+.m3-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 24px;
+  border-radius: var(--m3-shape-full);
+  border: none;
+  font-family: var(--m3-font);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: .00625rem;
+  white-space: nowrap;
+}
+
+.m3-btn-filled {
+  background-color: var(--m3-primary);
+  color: var(--m3-on-primary);
+  box-shadow: var(--m3-elevation-1);
+}
+
+.m3-btn-tonal {
+  background-color: var(--m3-secondary-container);
+  color: var(--m3-on-secondary-container);
+}
+
+.m3-btn-outlined {
+  background-color: transparent;
+  color: var(--m3-primary);
+  border: 1px solid var(--m3-outline);
+}
+
+.m3-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.m3-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--m3-shape-full);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.m3-card {
+  border-radius: var(--m3-shape-lg);
+  background-color: var(--m3-surface-container-low);
+}
+
+.m3-card-elevated {
+  box-shadow: var(--m3-elevation-1);
+}
+
+.m3-card-outlined {
+  border: 1px solid var(--m3-outline-variant);
+}

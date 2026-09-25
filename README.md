@@ -51,10 +51,10 @@
 | 項目 | 内容 |
 |---|---|
 | 構成 | 素のHTML / CSS / JavaScript（ビルド不要、フレームワーク未使用） |
-| モジュール | ES Modules（`<script type="module">`。ただし`orders.html`のみ後述の通り例外あり） |
+| モジュール | ES Modules（`<script type="module">`、全画面共通） |
 | 通信 | `fetch` API（`js/api.js` に集約） |
-| セッション管理 | `localStorage`（JWTアクセストークン・店舗名を保存） |
-| スタイル | Google Fonts（Noto Sans JP）、`ress` によるリセットCSS |
+| セッション管理 | `localStorage`（JWTアクセストークン・店舗名・管理者フラグを保存） |
+| デザイン | **Material 3 Expressive**（`css/m3-tokens.css`＋`css/m3-components.css`）。色ロール・シェイプ・タイポスケール・elevation・モーションをトークン化し、全画面に適用。クリックリップルは`js/ripple.js`（バニラJS、イベント委譲） |
 | 配信 | Docker Compose上のnginx（静的配信） |
 
 ### インフラ
@@ -125,10 +125,14 @@ Zeniq-Alpha/
     ├── orders.html          # 会計履歴画面
     ├── sales.html           # 売上分析画面
     ├── admin.html           # 管理画面（店舗登録、管理者のみ）
-    ├── css/                 # 画面ごとのスタイル
+    ├── css/
+    │   ├── m3-tokens.css      # Material 3 Expressive デザイントークン（色・シェイプ・タイポ・elevation・motion）
+    │   ├── m3-components.css # 全画面共通のリップル・フォーカスリング等のインタラクション層
+    │   └── ...                # login.css / style.css / items.css / orders.css / sales.css / admin.css / header.css（画面固有スタイル）
     ├── img/                 # アイコン画像
     └── js/
         ├── config.js        # window.__ENV__.API_BASE（バックエンドURL設定）
+        ├── ripple.js        # M3クリックリップル（イベント委譲、動的要素にも自動対応）
         ├── api.js           # バックエンドAPI呼び出しの共通モジュール
         ├── auth.js          # トークン・管理者フラグの保存/取得、認証ガード
         ├── header.js        # 共通ヘッダー（ナビゲーション）の描画・認証ガード

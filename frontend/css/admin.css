@@ -1,73 +1,32 @@
 @charset "UTF-8";
 
-html {
-    font-size: 100%;
-}
-
-body {
-    background-color: var(--color1);
-    color: var(--color5);
-    min-height: 100vh;
-}
-
-img {
-    vertical-align: bottom;
-}
-
-ul {
-    list-style: none;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-button {
-    color: inherit;
-    border: none;
-}
-
-:root {
-    --color1: #F8FCFF;
-    --color15: #EEF8FF;
-    --color2: #DBECF9;
-    --color3: #C9D8E4;
-    --color4: #56708D;
-    --color5: #00234B;
-    --blue: #2A70C9;
-    --red: #DF6161;
-    --green: #1DB756;
-    --light-red: #FFF2F2;
-    --light-green: #EBFFF3;
-}
-
-/* common ここまで */
+/* html/body/img/ul/a/button の共通リセット・:root は m3-tokens.css へ移動済み */
 
 .container {
     max-width: 900px;
-    padding: 0 16px;
+    padding: 0 24px;
     margin: 0 auto;
 }
 
 .page-title {
     font-weight: 700;
-    font-size: 1.625rem;
+    font-size: 1.75rem;
     margin-top: 32px;
     margin-bottom: 8px;
+    color: var(--m3-on-surface);
 }
 
 .page-explain {
-    color: var(--color4);
-    margin-bottom: 24px;
+    color: var(--m3-on-surface-variant);
+    margin-bottom: 28px;
 }
 
 /* 店舗登録カード */
 .admin-card {
     max-width: 470px;
-    border-radius: 6px;
-    border: 1px solid var(--color2);
-    background-color: var(--color15);
+    border-radius: var(--m3-shape-xl);
+    background-color: var(--m3-surface-container-low);
+    box-shadow: var(--m3-elevation-1);
     padding: 40px;
     margin-bottom: 32px;
 }
@@ -76,59 +35,78 @@ button {
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 24px;
+    color: var(--m3-on-surface);
 }
 
 form label {
     display: block;
     margin-bottom: 8px;
-    color: var(--color4);
+    color: var(--m3-on-surface-variant);
+    font-size: 0.875rem;
+    font-weight: 700;
 }
 
 form input {
     display: block;
     width: 100%;
     font-size: 1rem;
-    padding: 12px 16px;
-    border-radius: 6px;
-    background-color: var(--color2);
+    padding: 15px 16px;
+    border-radius: var(--m3-shape-xs) var(--m3-shape-xs) 0 0;
+    background-color: var(--m3-surface-container-highest);
     border: none;
-    color: var(--color5);
+    border-bottom: 2px solid var(--m3-outline);
+    color: var(--m3-on-surface);
+    transition: border-color var(--m3-duration-short) var(--m3-ease-standard);
+}
+
+form input:focus {
+    outline: none;
+    border-bottom-color: var(--m3-primary);
 }
 
 form input::placeholder {
-    color: var(--color4);
+    color: var(--m3-on-surface-variant);
 }
 
 .form-item:not(:last-of-type) {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .form-item:last-of-type {
-    margin-bottom: 30px;
+    margin-bottom: 32px;
 }
 
 button[type=submit] {
     width: 100%;
     display: block;
-    padding: 12px;
-    background-color: var(--blue);
-    border-radius: 6px;
-    color: var(--color1);
-    font-size: 1.125rem;
-    cursor: pointer;
+    padding: 16px;
+    background-color: var(--m3-primary);
+    border-radius: var(--m3-shape-full);
+    color: var(--m3-on-primary);
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: var(--m3-elevation-1);
+    position: relative;
+    overflow: hidden;
 }
 
-button[type=submit]:hover {
-    opacity: 0.9;
+button[type=submit]:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--m3-primary) 92%, black 8%);
+    box-shadow: var(--m3-elevation-2);
 }
 
 button[type=submit]:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .form-error {
-    color: var(--red);
+    color: var(--m3-on-error-container);
+    background-color: var(--m3-error-container);
+    padding: 10px 14px;
+    border-radius: var(--m3-shape-sm);
     margin: -10px 0 20px;
     font-size: 0.9rem;
+    font-weight: 500;
 }
