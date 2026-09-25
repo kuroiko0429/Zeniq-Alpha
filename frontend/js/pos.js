@@ -102,9 +102,19 @@ function sortItemsById(arr) {
 function renderItemList() {
     if (!itemList) return;
     itemList.replaceChildren();
-    sortItemsById(itemAry).forEach(item => {
+    sortItemsById(itemAry).forEach((item, index) => {
         const itemEle = document.createElement('div');
-        itemEle.innerHTML = `<dt>${item.name}</dt><dd>￥${item.price}</dd><dd class="item-stock">在庫数：${item.stock}</dd>`;
+        const avatarIndex = (item.id % 4) + 1;
+        const isLowStock = item.stock <= 10;
+        itemEle.classList.add('m3-enter');
+        itemEle.style.animationDelay = `${Math.min(index, 12) * 30}ms`;
+        itemEle.innerHTML = `
+            <div class="item-avatar m3-avatar m3-avatar-${avatarIndex}"><span class="m3-icon m3-icon-fill">restaurant</span></div>
+            <dt>${item.name}</dt>
+            <dd>￥${item.price}</dd>
+            <dd class="item-stock${isLowStock ? ' is-low' : ''}"><span class="m3-icon">${isLowStock ? 'warning' : 'inventory_2'}</span>在庫数：${item.stock}</dd>
+            <span class="item-add-badge m3-icon m3-icon-fill">add_circle</span>
+        `;
         itemEle.dataset.id = item.id;
         itemEle.addEventListener('click', () => itemToCart(item.id));
         itemList.appendChild(itemEle);
@@ -131,7 +141,31 @@ await loadItems();
 const cartItem = [];
 function itemToCart(id) { const same = cartItem.find(i => i.id == id); if (!same) { const src = itemAry.find(i => i.id === id); cartItem.push({ id, name: src.name, price: src.price, num: 1 }); } else same.num++; renderCartItem(); }
 const cartItemArea = $('.cart-item-area'); function initCartItem() { if (cartItemArea) cartItemArea.replaceChildren(); }
-function renderCartItem() { initCartItem(); cartItem.forEach(item => { const itemEle = document.createElement('div'); itemEle.classList.add('cart-item'); itemEle.innerHTML = ` <p class="cart-item-name">${item.name}</p> <div class="cart-item-edit"> <button class="cart-item-edit-num" data-edit-type="dec">-</button> <p class="cart-item-num">${item.num}</p> <button class="cart-item-edit-num" data-edit-type="inc">+</button> <button class="cart-item-edit-delete">×</button> </div>`; const incBtn = itemEle.querySelector('[data-edit-type="inc"]'); const decBtn = itemEle.querySelector('[data-edit-type="dec"]'); const delBtn = itemEle.querySelector('.cart-item-edit-delete'); if (incBtn) incBtn.addEventListener('click', () => increaseItem(item.id)); if (decBtn) decBtn.addEventListener('click', () => decreaseItem(item.id)); if (delBtn) delBtn.addEventListener('click', () => deleteItem(item.id)); if (cartItemArea) cartItemArea.appendChild(itemEle); }); renderTotal(); updatePayButtonsState(); }
+function renderCartItem() {
+    initCartItem();
+    cartItem.forEach((item, index) => {
+        const itemEle = document.createElement('div');
+        itemEle.classList.add('cart-item', 'm3-enter');
+        itemEle.style.animationDelay = `${Math.min(index, 8) * 30}ms`;
+        itemEle.innerHTML = `
+            <p class="cart-item-name">${item.name}</p>
+            <div class="cart-item-edit">
+                <button class="cart-item-edit-num" data-edit-type="dec"><span class="m3-icon">remove</span></button>
+                <p class="cart-item-num">${item.num}</p>
+                <button class="cart-item-edit-num" data-edit-type="inc"><span class="m3-icon">add</span></button>
+                <button class="cart-item-edit-delete"><span class="m3-icon">close</span></button>
+            </div>`;
+        const incBtn = itemEle.querySelector('[data-edit-type="inc"]');
+        const decBtn = itemEle.querySelector('[data-edit-type="dec"]');
+        const delBtn = itemEle.querySelector('.cart-item-edit-delete');
+        if (incBtn) incBtn.addEventListener('click', () => increaseItem(item.id));
+        if (decBtn) decBtn.addEventListener('click', () => decreaseItem(item.id));
+        if (delBtn) delBtn.addEventListener('click', () => deleteItem(item.id));
+        if (cartItemArea) cartItemArea.appendChild(itemEle);
+    });
+    renderTotal();
+    updatePayButtonsState();
+}
 function decreaseItem(id) { const it = cartItem.find(i => i.id === id); if (!it) return; if (it.num > 1) { it.num--; renderCartItem(); } else deleteItem(id); }
 function increaseItem(id) { const it = cartItem.find(i => i.id === id); if (it) { it.num++; renderCartItem(); } }
 function deleteItem(id) { const idx = cartItem.findIndex(i => i.id === id); if (idx !== -1) { cartItem.splice(idx, 1); renderCartItem(); } }

@@ -21,21 +21,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 1つの商品カード（表示用カード＋編集パネル）のHTMLを生成
   function createCardHTML(product) {
+    const avatarIndex = (Number(product.store_product_no) % 4) + 1;
+    const stock = Number(product.stock);
+    const isLowStock = stock <= 10;
     return `
         <div class="product-card">
+            <div class="product-avatar m3-avatar m3-avatar-${avatarIndex}">
+                <span class="m3-icon m3-icon-fill">storefront</span>
+            </div>
             <div class="product-info">
                 <div class="product-name">${escapeHTML(product.name)}</div>
                 <div class="product-price">¥${Number(product.price).toLocaleString()}</div>
-                <div class="product-stock">在庫数：${Number(product.stock).toLocaleString()}</div>
+                <div class="product-stock${isLowStock ? ' is-low' : ''}">
+                    <span class="m3-icon">${isLowStock ? 'warning' : 'inventory_2'}</span>
+                    在庫数：${stock.toLocaleString()}
+                </div>
             </div>
             <div class="product-actions">
                 <button type="button" class="card-btn btn-edit" title="編集">
-                    <i class="fa-regular fa-pen-to-square"></i>
-                    <img src="img/Edit.png" alt="">
+                    <span class="m3-icon">edit</span>
                 </button>
                 <button type="button" class="card-btn btn-delete" title="削除">
-                    <i class="fa-regular fa-trash-can"></i>
-                    <img src="img/Trash.png" alt="">
+                    <span class="m3-icon">delete</span>
                 </button>
             </div>
         </div>
@@ -76,8 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const products = await getProducts();
       productGrid.innerHTML = '';
-      products.forEach(product => {
-        productGrid.appendChild(buildCardElement(product));
+      products.forEach((product, index) => {
+        const card = buildCardElement(product);
+        card.classList.add('m3-enter');
+        card.style.animationDelay = `${Math.min(index, 12) * 40}ms`;
+        productGrid.appendChild(card);
       });
     } catch (err) {
       showErrorToast(err.message || '商品の取得に失敗しました');

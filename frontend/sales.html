@@ -10,6 +10,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
         <!-- Material 3 Expressive デザインシステム -->
         <link rel="stylesheet" href="css/m3-tokens.css">
         <link rel="stylesheet" href="css/m3-components.css">
@@ -38,14 +39,14 @@
         <main>
             <div class="container">
                 <div class="period-container">
-                    <button class="nitibetu active" id="btn-niti">日別</button>
-                    <button class="zenkikan" id="btn-zen">全期間</button>
+                    <button class="nitibetu active" id="btn-niti"><span class="m3-icon">today</span>日別</button>
+                    <button class="zenkikan" id="btn-zen"><span class="m3-icon">date_range</span>全期間</button>
                 </div>
 
                 <!-- 日別 -->
                 <div class="analysis-card-niti">
                     <div class="yyyy">
-                        <img src="img/calendar.png" alt="">
+                        <span class="m3-icon m3-icon-fill">calendar_month</span>
                         <input type="date" id="niti-date-input" class="date-title date-picker-input">
                     </div>
 
@@ -92,7 +93,7 @@
                 <!--全期間-->
                 <div class="analysis-card-zen">
                     <div class="yyyy">
-                        <img src="img/calendar.png" alt="">
+                        <span class="m3-icon m3-icon-fill">calendar_month</span>
                         <h2 class="date-title">全期間</h2>
                     </div>
 

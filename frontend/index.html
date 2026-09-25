@@ -10,6 +10,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
         <!-- Material 3 Expressive デザインシステム -->
         <link rel="stylesheet" href="css/m3-tokens.css">
         <link rel="stylesheet" href="css/m3-components.css">
@@ -47,9 +48,9 @@
                             </div>
 
                             <ul class="pay-how-btn-list">
-                                <li><button onclick="onPayHow(this,'cash')">現金</button></li>
-                                <li><button onclick="onPayHow(this,'ticket')">模擬券</button></li>
-                                <li><button onclick="onPayHow(this,'qr')">QR決済</button></li>
+                                <li><button onclick="onPayHow(this,'cash')"><span class="m3-icon">payments</span>現金</button></li>
+                                <li><button onclick="onPayHow(this,'ticket')"><span class="m3-icon">confirmation_number</span>模擬券</button></li>
+                                <li><button onclick="onPayHow(this,'qr')"><span class="m3-icon">qr_code_scanner</span>QR決済</button></li>
                             </ul>
 
                             <div class="pay-how-detail">
@@ -90,8 +91,8 @@
                                         </div>
                                         <p class="add-pay-how-title">追加の支払方法</p>
                                         <ul class="add-pay-how-btn-list">
-                                            <li><button data-option="cash">現金</button></li>
-                                            <li><button data-option="qr">QR決済</button></li>
+                                            <li><button data-option="cash"><span class="m3-icon">payments</span>現金</button></li>
+                                            <li><button data-option="qr"><span class="m3-icon">qr_code_scanner</span>QR決済</button></li>
                                         </ul>
                                     </div>
 
@@ -115,7 +116,7 @@
                                 </div>
                             </div>
 
-                            <button class="execute-pay-btn">会計する</button>
+                            <button class="execute-pay-btn"><span class="m3-icon m3-icon-fill">shopping_cart_checkout</span>会計する</button>
                         </div>
                     </div>
                 </div>

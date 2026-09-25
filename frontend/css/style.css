@@ -3,6 +3,12 @@
 
 /* html/body/img/ul/a/button の共通リセットは m3-tokens.css へ移動済み */
 
+body {
+    background:
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--m3-tertiary-container) 45%, transparent) 0%, transparent 40%),
+        var(--m3-surface);
+}
+
 .container {
     display: flex;
     width: 100%;
@@ -19,6 +25,7 @@
     background-color: var(--m3-surface-container-low);
     min-height: calc(100vh - 72px);
     border-left: 1px solid var(--m3-outline-variant);
+    border-radius: var(--m3-shape-xl) 0 0 0;
 }
 
 .select-title {
@@ -30,7 +37,7 @@
 
 .item-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 200px);
+    grid-template-columns: repeat(auto-fill, 208px);
     gap: 16px 12px;
 }
 
@@ -43,19 +50,26 @@
     position: relative;
     overflow: hidden;
     transition: box-shadow var(--m3-duration-short) var(--m3-ease-standard),
-                background-color var(--m3-duration-short) var(--m3-ease-standard);
+                background-color var(--m3-duration-short) var(--m3-ease-standard),
+                transform var(--m3-duration-short) var(--m3-ease-bounce);
 }
 
 .item-list>div:hover {
-    box-shadow: var(--m3-elevation-1);
+    box-shadow: var(--m3-elevation-2);
     background-color: color-mix(in srgb, var(--m3-surface-container-highest) 88%, var(--m3-primary) 12%);
+    transform: translateY(-3px);
+}
+
+.item-avatar {
+    margin-bottom: 12px;
 }
 
 .item-list dt {
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--m3-on-surface);
+    padding-right: 24px;
 }
 
 .item-list dd {
@@ -65,18 +79,37 @@
 }
 
 .item-list dd.item-stock {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--m3-on-surface-variant);
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
-.cart-area {
-    display: flex;
-    flex-direction: column;
+.item-list dd.item-stock .m3-icon {
+    font-size: 16px;
+}
+
+.item-list dd.item-stock.is-low {
+    color: var(--m3-error);
+    font-weight: 700;
+}
+
+.item-add-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: 26px;
+    color: var(--m3-primary);
+    opacity: 0.85;
 }
 
 .cart-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 1.375rem;
     font-weight: 700;
     padding: 20px 24px;
@@ -119,30 +152,47 @@
 .cart-item-edit {
     display: flex;
     align-items: center;
+    gap: 4px;
     font-weight: 700;
 }
 
 .cart-item-edit-num {
     border-radius: var(--m3-shape-full);
     background-color: var(--m3-surface-container-lowest);
-    width: 28px;
+    width: 30px;
     aspect-ratio: 1/1;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--m3-outline-variant);
+    color: var(--m3-on-surface);
+}
+
+.cart-item-edit-num .m3-icon {
+    font-size: 16px;
 }
 
 .cart-item-num {
-    padding: 0 10px;
+    padding: 0 8px;
+    min-width: 1.5em;
+    text-align: center;
     color: var(--m3-on-surface);
 }
 
 .cart-item-edit-delete {
-    margin-left: 20px;
+    margin-left: 12px;
     background-color: var(--m3-error-container);
     border-radius: var(--m3-shape-full);
-    width: 28px;
+    width: 30px;
     aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: var(--m3-on-error-container);
+}
+
+.cart-item-edit-delete .m3-icon {
+    font-size: 16px;
 }
 
 .pay-area {
@@ -159,15 +209,17 @@
 }
 
 .sum-title h3 {
-    font-size: 1.375rem;
+    font-size: 1.125rem;
     font-weight: 700;
-    color: var(--m3-on-surface);
+    color: var(--m3-on-surface-variant);
 }
 
 .sum-title p {
-    font-size: 1.75rem;
+    font-size: 2.25rem;
+    line-height: 1;
     color: var(--m3-primary);
     font-weight: 700;
+    letter-spacing: -.01em;
 }
 
 .pay-how-btn-list {
@@ -179,14 +231,22 @@
 }
 
 .pay-how-btn-list button {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     width: 100%;
-    padding: 10px;
-    border-radius: var(--m3-shape-full);
+    padding: 12px 6px;
+    border-radius: var(--m3-shape-lg);
     text-align: center;
     background-color: var(--m3-surface-container-highest);
     color: var(--m3-on-surface-variant);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+}
+
+.pay-how-btn-list button .m3-icon {
+    font-size: 22px;
 }
 
 .is-selected-btn {
@@ -195,22 +255,37 @@
 }
 
 .execute-pay-btn {
-    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px;
     border-radius: var(--m3-shape-full);
     background-color: var(--m3-surface-container-highest);
     color: var(--m3-on-surface-variant);
     text-align: center;
     width: 100%;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.0625rem;
     position: relative;
     overflow: hidden;
+}
+
+.execute-pay-btn .m3-icon {
+    font-size: 24px;
 }
 
 .execute-pay-btn.is-available {
     background-color: var(--m3-success);
     color: var(--m3-on-success);
-    box-shadow: var(--m3-elevation-2);
+    box-shadow: var(--m3-elevation-3), 0 0 0 6px color-mix(in srgb, var(--m3-success) 18%, transparent);
+    animation: m3-fab-pop 400ms var(--m3-ease-bounce);
+}
+
+@keyframes m3-fab-pop {
+    0% { transform: scale(0.94); }
+    60% { transform: scale(1.03); }
+    100% { transform: scale(1); }
 }
 
 .pay-how-detail {
@@ -219,7 +294,7 @@
 
 /* 現金 */
 .pay-how-detail-cash {
-    border-radius: var(--m3-shape-lg);
+    border-radius: var(--m3-shape-lg) var(--m3-shape-lg) var(--m3-shape-lg) var(--m3-shape-xs);
     padding: 16px;
     border: 1px solid var(--m3-outline-variant);
     background-color: var(--m3-surface-container-low);
@@ -298,7 +373,7 @@
 /* 模擬券 */
 .pay-how-detail-ticket {
     padding: 16px;
-    border-radius: var(--m3-shape-lg);
+    border-radius: var(--m3-shape-lg) var(--m3-shape-lg) var(--m3-shape-lg) var(--m3-shape-xs);
     border: 1px solid var(--m3-outline-variant);
     background-color: var(--m3-surface-container-low);
 }
@@ -359,7 +434,10 @@
 }
 
 .add-pay-how-btn-list button {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     width: 100%;
     border-radius: var(--m3-shape-full);
     padding: 8px;
@@ -367,6 +445,10 @@
     color: var(--m3-on-surface-variant);
     font-weight: 700;
     text-align: center;
+}
+
+.add-pay-how-btn-list button .m3-icon {
+    font-size: 18px;
 }
 
 /* 無効化見た目 */

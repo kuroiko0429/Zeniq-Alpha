@@ -185,13 +185,13 @@ function showEditHeadButtons(orderEle, onConfirm, onCancel) {
     const confirmBtnEle = document.createElement("button");
     confirmBtnEle.setAttribute("type", "button");
     confirmBtnEle.setAttribute("class", "confirm-order-btn");
-    confirmBtnEle.innerHTML = "<img src='img/Check.png'>";
+    confirmBtnEle.innerHTML = "<span class='m3-icon m3-icon-fill'>check</span>";
     confirmBtnEle.addEventListener("click", onConfirm);
 
     const cancelBtnEle = document.createElement("button");
     cancelBtnEle.setAttribute("type", "button");
     cancelBtnEle.setAttribute("class", "cancel-order-btn");
-    cancelBtnEle.innerHTML = "<img src='img/Batu.png'>";
+    cancelBtnEle.innerHTML = "<span class='m3-icon'>close</span>";
     cancelBtnEle.addEventListener("click", onCancel);
 
     headRight.appendChild(confirmBtnEle);
@@ -253,7 +253,7 @@ function renderOrderBodyEdit(orderEle, draft) {
             <p class="order-body-subtitle">商品</p>
             <div class="order-item-list-area-edit">
                 <div class="order-item-list-edit"></div>
-                <button type="button" class="add-item-btn">＋ 商品を追加</button>
+                <button type="button" class="add-item-btn"><span class="m3-icon">add</span>商品を追加</button>
             </div>
         </div>
 
@@ -301,7 +301,7 @@ function renderOrderBodyEdit(orderEle, draft) {
                 </div>
             </div>
                 <button type="button" class="delete-item-row-btn">
-                    <img src="img/Trash.png" alt="">
+                    <span class="m3-icon">delete</span>
                 </button>
             
             `;
@@ -417,10 +417,10 @@ function createOrderElement(order) {
                         </div>
                         <div class="order-head-right">
                             <button class="edit-order-btn">
-                                <img src="img/Edit.png" alt="">
+                                <span class="m3-icon">edit</span>
                             </button>
                             <button class="delete-order-btn">
-                                <img src="img/Trash.png" alt="">
+                                <span class="m3-icon">delete</span>
                             </button>
                         </div>
                     </div>
@@ -531,8 +531,11 @@ function applyFilters() {
         orderList.innerHTML = "<p class='no-result-msg'>該当する会計履歴がありません</p>";
         return;
     }
-    filtered.forEach((order) => {
-        orderList.appendChild(createOrderElement(order));
+    filtered.forEach((order, index) => {
+        const orderEle = createOrderElement(order);
+        orderEle.classList.add('m3-enter');
+        orderEle.style.animationDelay = `${Math.min(index, 12) * 40}ms`;
+        orderList.appendChild(orderEle);
     })
 }
 

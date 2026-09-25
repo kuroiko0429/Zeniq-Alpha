@@ -205,3 +205,60 @@ hr {
 .m3-elevation-1 { box-shadow: var(--m3-elevation-1); }
 .m3-elevation-2 { box-shadow: var(--m3-elevation-2); }
 .m3-elevation-3 { box-shadow: var(--m3-elevation-3); }
+
+/* ============ アイコン（Material Symbols Rounded 可変フォント） ============ */
+.m3-icon {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.m3-icon-fill {
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ============ カラーアバター（商品タイル等のアイコンバッジ） ============
+ * :nth-child ローテーションでExpressiveな多色感を出す。
+ */
+.m3-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--m3-shape-lg);
+  flex-shrink: 0;
+}
+
+.m3-avatar-1 { background-color: var(--m3-primary-container); color: var(--m3-on-primary-container); }
+.m3-avatar-2 { background-color: var(--m3-tertiary-container); color: var(--m3-on-tertiary-container); }
+.m3-avatar-3 { background-color: var(--m3-secondary-container); color: var(--m3-on-secondary-container); }
+.m3-avatar-4 { background-color: var(--m3-success-container); color: var(--m3-on-success-container); }
+
+/* ============ エントランスモーション（Expressiveの跳ねる登場演出） ============ */
+@keyframes m3-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.m3-enter {
+  animation: m3-enter var(--m3-duration-medium) var(--m3-ease-emphasized-decelerate) backwards;
+}

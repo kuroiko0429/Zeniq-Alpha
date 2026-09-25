@@ -2,6 +2,12 @@
 
 /* html/body/img/ul/a/button の共通リセット・:root は m3-tokens.css へ移動済み */
 
+body {
+    background:
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--m3-primary-container) 40%, transparent) 0%, transparent 40%),
+        var(--m3-surface);
+}
+
 /* メインコンテンツエリア */
 .container {
     max-width: 1000px;
@@ -32,10 +38,19 @@
     background-color: var(--m3-surface-container-highest);
     color: var(--m3-on-surface-variant);
     border: none;
-    width: 96px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 108px;
     height: 40px;
     border-radius: var(--m3-shape-full);
     font-weight: 700;
+}
+
+.nitibetu .m3-icon,
+.zenkikan .m3-icon {
+    font-size: 18px;
 }
 
 .nitibetu.active,
@@ -47,7 +62,7 @@
 /* 分析ボード本体 */
 .analysis-card-niti,
 .analysis-card-zen {
-    border-radius: var(--m3-shape-xl);
+    border-radius: var(--m3-shape-xl) var(--m3-shape-xl) var(--m3-shape-xl) var(--m3-shape-xs);
     padding: 28px;
     background-color: var(--m3-surface-container-low);
     box-shadow: var(--m3-elevation-1);
@@ -67,10 +82,9 @@
     align-items: center;
 }
 
-.yyyy img {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
+.yyyy .m3-icon {
+    font-size: 26px;
+    color: var(--m3-primary);
 }
 
 .summary-grid {

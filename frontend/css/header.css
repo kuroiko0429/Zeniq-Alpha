@@ -4,9 +4,10 @@
  */
 
 #header {
-    background-color: var(--m3-surface-container);
+    background-color: color-mix(in srgb, var(--m3-surface-container) 92%, transparent);
+    backdrop-filter: blur(12px);
     box-shadow: var(--m3-elevation-1);
-    padding: 12px 0;
+    padding: 10px 0;
     min-height: 72px;
     position: sticky;
     top: 0;
@@ -24,7 +25,7 @@
 
 .header-container {
     padding: 0 24px;
-    max-width: 1280px;
+    max-width: 1320px;
     margin: 0 auto;
 }
 
@@ -32,7 +33,32 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: 24px;
+}
+
+/* ブランドマーク */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.header-brand-icon {
+    font-size: 26px;
+    color: var(--m3-primary);
+}
+
+.header-brand-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--m3-primary);
+    letter-spacing: -.01em;
+}
+
+.header-nav {
+    flex-grow: 1;
+    min-width: 0;
 }
 
 .header-nav ul {
@@ -44,9 +70,10 @@
 .header-nav a {
     display: flex;
     align-items: center;
+    gap: 8px;
     height: 40px;
     width: fit-content;
-    padding: 0 20px;
+    padding: 0 18px;
     border-radius: var(--m3-shape-full);
     color: var(--m3-on-surface-variant);
     font-size: 0.875rem;
@@ -54,6 +81,10 @@
     letter-spacing: .00625rem;
     position: relative;
     overflow: hidden;
+}
+
+.header-nav a .m3-icon {
+    font-size: 20px;
 }
 
 .header-nav a:hover {
@@ -65,29 +96,39 @@
     color: var(--m3-on-secondary-container);
 }
 
+.header-nav a.header-current-page .m3-icon {
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
 .header-right {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     flex-shrink: 0;
 }
 
 .header-store-name {
     display: flex;
     align-items: center;
-    height: 32px;
-    padding: 0 14px;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px 0 10px;
     border-radius: var(--m3-shape-full);
     background-color: var(--m3-tertiary-container);
     color: var(--m3-on-tertiary-container);
     font-size: 0.8125rem;
     font-weight: 700;
+    white-space: nowrap;
+}
+
+.header-store-name .m3-icon {
+    font-size: 18px;
 }
 
 .header-logout {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
     height: 40px;
     font-size: 0.875rem;
     font-weight: 700;
@@ -95,10 +136,14 @@
     color: var(--m3-on-error-container);
     border-radius: var(--m3-shape-full);
     background-color: var(--m3-error-container);
-    padding: 0 20px;
+    padding: 0 18px;
     border: none;
     position: relative;
     overflow: hidden;
+}
+
+.header-logout .m3-icon {
+    font-size: 20px;
 }
 
 .header-logout:hover {

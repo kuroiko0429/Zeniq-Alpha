@@ -2,6 +2,12 @@
 
 /* html/body/img/ul/a/button の共通リセット・:root は m3-tokens.css へ移動済み */
 
+body {
+    background:
+        radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--m3-primary-container) 45%, transparent) 0%, transparent 40%),
+        var(--m3-surface);
+}
+
 .container {
     max-width: 900px;
     padding: 0 24px;
@@ -24,7 +30,7 @@
 /* 店舗登録カード */
 .admin-card {
     max-width: 470px;
-    border-radius: var(--m3-shape-xl);
+    border-radius: var(--m3-shape-xl) var(--m3-shape-xl) var(--m3-shape-xl) var(--m3-shape-xs);
     background-color: var(--m3-surface-container-low);
     box-shadow: var(--m3-elevation-1);
     padding: 40px;
