@@ -23,7 +23,8 @@ def create(db: Session, order: schemas.OrderCreate, store_id: int):
         product.stock -= item.quantity
         order_items.append(models.OrderItem(
             product_id=product.id,
-            quantity=item.quantity
+            quantity=item.quantity,
+            unit_price=product.price
         ))
  
     if calculated_total != order.total:
@@ -105,7 +106,8 @@ def update(db: Session, order_id: int, order: schemas.OrderCreate, store_id: int
         product.stock -= item.quantity
         order_items.append(models.OrderItem(
             product_id=product.id,
-            quantity=item.quantity
+            quantity=item.quantity,
+            unit_price=product.price
         ))
  
     if calculated_total != order.total:

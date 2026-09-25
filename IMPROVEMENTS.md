@@ -25,13 +25,18 @@
   → `schemas/auth.py`の`RegisterRequest.password`に`Field(min_length=8)`を追加。8文字未満での登録が422になることを確認済み。
 - **JWTの失効手段がない**（ステートレスJWTのみ、ブラックリスト等なし）。店舗のパスワード変更・アカウント削除後も、有効期限（8時間）内はトークンが使え続ける。学園祭1日運用なら実害は小さいため、今回は未対応（実装するならRedis等でのブラックリスト管理が必要になり手間が大きい）。
 
-## 🧱 データ整合性・スキーマ設計
+## 🧱 データ整合性・スキーマ設計 — ✅ 対応済み
 
-- **`products.store_product_no`にDBレベルの一意制約がない**（`alembic/versions/001_initial.py:28-38`）。`product_service.create`（`backend/services/product_service.py:18-29`）は「同店舗の最大値+1」をSELECTしてから INSERTするだけで、トランザクションロックも一意制約もない。同時に2リクエストが来ると**同じ`store_product_no`が重複採番される**（競合状態）。`UniqueConstraint('store_id', 'store_product_no')`をマイグレーションで追加し、アプリ側でも`IntegrityError`をハンドリングしてリトライ or 400を返すようにする。
-- **注文明細（`order_items`）に購入時点の単価スナップショットがない**（`backend/models/order.py:19-28`、`schemas/order.py:19-21`）。`quantity`と`product_id`だけを保持しており、単価は持っていない。あとから商品価格を変更すると、過去の注文の「単価×数量」を再現できなくなる（`Order.total`自体は作成時点の値のまま保持されるので合計だけは正しいが、明細レベルの内訳が壊れる）。`order_items`に`unit_price`カラムを追加し、作成時の`product.price`を保存するべき。
-- **商品削除時に過去の注文がある場合の考慮がない**（`backend/services/product_service.py:43-47`）。`order_items.product_id`のFKには`ondelete`指定がなく（`001_initial.py:61`）、注文履歴がある商品を削除しようとするとDBの外部キー制約違反で生の500エラーになる。「論理削除（is_deletedフラグ）」に切り替えるか、削除前に注文履歴の有無をチェックして分かりやすい400エラーを返す。
-- **`products.stock`が`nullable=True`**（`models/product.py:11`、マイグレーションも`nullable=True`）。在庫はビジネスロジック上必須の値なので`NOT NULL DEFAULT 0`にすべき。
-- **`ProductCreate`/`OrderItemCreate`に非負制約がない**（`schemas/product.py`, `schemas/order.py`）。`price`や`stock`に負の値、`quantity`に0以下の値を送っても素通りしてしまう。Pydanticの`Field(ge=0)`/`Field(gt=0)`で弾くべき。
+- ~~**`products.store_product_no`にDBレベルの一意制約がない**~~
+  → `UniqueConstraint('store_id', 'store_product_no')`をマイグレーション（`005_add_unique_store_product_no`）で追加。`product_service.create`は`IntegrityError`発生時に最大3回まで採番をリトライし、それでも失敗したら409を返すよう変更。15並列リクエストで実機テストし、重複なしで13件成功・2件が409（リトライ上限）になることを確認済み。
+- ~~**注文明細（`order_items`）に購入時点の単価スナップショットがない**~~
+  → `order_items.unit_price`カラムを追加（マイグレーション`006_add_order_item_unit_price`、既存行はproducts.priceで一括バックフィル）。`order_service.py`のcreate/update両方で作成時の`product.price`を保存。`frontend/js/orders.js`の履歴表示もこの`unit_price`を使うよう変更。商品価格を500→700に変更後も、既存注文が引き続き500円として表示されることを実機確認済み。
+- ~~**商品削除時に過去の注文がある場合の考慮がない**~~
+  → `product_service.delete`で削除前に`order_items`の参照有無をチェックし、履歴がある場合は400「◯◯ は過去の注文で使用されているため削除できません」を返すよう変更（生の500 IntegrityErrorだったのを解消）。履歴のある商品の削除が400、履歴のない商品の削除が200になることを確認済み。
+- ~~**`products.stock`が`nullable=True`**~~
+  → マイグレーション`007_products_stock_not_null`で既存NULL行を0埋めしたうえで`NOT NULL DEFAULT 0`に変更。モデルも追従済み。
+- ~~**`ProductCreate`/`OrderItemCreate`に非負制約がない**~~
+  → `ProductCreate.price`/`stock`に`Field(ge=0)`、`OrderItemCreate.quantity`に`Field(gt=0)`、`OrderCreate.total`と`OrderPaymentMethodCreate`の各金額フィールドにも`Field(ge=0)`を追加。負の価格・0以下の数量での登録がいずれも422になることを確認済み。
 
 ## ⚙️ バックエンド設計
 

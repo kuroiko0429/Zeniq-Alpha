@@ -23,6 +23,7 @@ class OrderItem(Base):
     order_id   = Column(Integer, ForeignKey("orders.id"), nullable=False)
     product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
     quantity   = Column(Integer, nullable=False)
+    unit_price = Column(Integer, nullable=False)  # 購入時点の単価スナップショット
 
     order   = relationship("Order", back_populates="items")
     product = relationship("Product")

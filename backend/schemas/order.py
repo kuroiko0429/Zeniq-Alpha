@@ -1,24 +1,25 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 class OrderItemCreate(BaseModel):
     store_product_no: int
-    quantity:   int
+    quantity:   int = Field(gt=0)
 
 class OrderPaymentMethodCreate(BaseModel):
-    cash: int = 0
-    ticket_100: int = 0
-    ticket_200: int = 0
-    emoney: int = 0
+    cash: int = Field(default=0, ge=0)
+    ticket_100: int = Field(default=0, ge=0)
+    ticket_200: int = Field(default=0, ge=0)
+    emoney: int = Field(default=0, ge=0)
 
 class OrderCreate(BaseModel):
     items:    list[OrderItemCreate]
-    total:    int
+    total:    int = Field(ge=0)
     payment_method: list[OrderPaymentMethodCreate]
 
 class OrderItemResponse(BaseModel):
     product_id: int
     quantity:   int
+    unit_price: int
 
     model_config = {"from_attributes": True}
 

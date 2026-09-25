@@ -8,5 +8,5 @@ class Product(Base):
     store_product_no = Column(Integer, nullable=False)
     name  = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
-    stock = Column(Integer, default=0)
+    stock = Column(Integer, nullable=False, default=0)
     store_id = Column(Integer, ForeignKey("stores.id"), nullable=False) 

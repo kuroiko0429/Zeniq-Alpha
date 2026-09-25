@@ -73,10 +73,13 @@ function mapApiOrderToLocal(apiOrder) {
         date: formatDate(dateObj),
         items: (apiOrder.items || []).map((it) => {
             const master = getItemMaster(it.product_id);
+            // 単価はAPIが返す購入時点のunit_price（購入後に商品価格が変わっても
+            // 履歴上の金額が変わらないようにするため）を優先し、
+            // 万一unit_priceが無い古いデータのみ現在の商品マスタ価格にフォールバックする。
             return {
                 id: it.product_id,
                 name: master ? master.name : "不明な商品",
-                price: master ? master.price : 0,
+                price: it.unit_price ?? (master ? master.price : 0),
                 num: it.quantity
             };
         }),
