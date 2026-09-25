@@ -1,0 +1,5 @@
+# テスト実行にのみ必要な追加パッケージ。
+# 本番イメージには含めない（Dockerfileではrequirements.txtのみをインストールする）。
+-r requirements.txt
+pytest==8.3.3
+httpx==0.28.1

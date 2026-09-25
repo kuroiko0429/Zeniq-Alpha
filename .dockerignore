@@ -1,0 +1,32 @@
+# backend/Dockerfile はリポジトリルート（.）をビルドコンテキストにしているため、
+# .dockerignore はここ（ルート）に置く必要がある（backend/直下に置いても効かない）。
+# 実際にイメージへ入るファイルはDockerfileのCOPY行で明示的に絞られているが、
+# ここで不要なファイルを除外してビルドコンテキストの転送を減らす。
+
+.git
+.gitattributes
+.gitignore
+
+# frontendはbackendイメージには不要（フロントは別途nginxコンテナがbindマウントで配信）
+frontend/
+
+# ドキュメント類
+*.md
+
+# Python生成物
+**/__pycache__/
+**/*.py[cod]
+**/*.egg-info/
+
+# 環境変数・秘匿情報
+.env
+.env.*
+!.env.example
+
+# エディタ/IDE
+.vscode/
+.idea/
+
+# テスト・カバレッジ生成物
+**/.pytest_cache/
+**/.coverage

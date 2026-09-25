@@ -43,7 +43,7 @@ def get_sales_summary(
     sales_by_product = db.query(
         models.Product.name,
         func.sum(models.OrderItem.quantity).label("total_quantity"),
-        func.sum(models.Product.price * models.OrderItem.quantity).label("total_amount")
+        func.sum(models.OrderItem.unit_price * models.OrderItem.quantity).label("total_amount")
     ).join(
         models.OrderItem, models.Product.id == models.OrderItem.product_id
     ).join(

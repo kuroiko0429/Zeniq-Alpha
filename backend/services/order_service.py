@@ -30,7 +30,7 @@ def create(db: Session, order: schemas.OrderCreate, store_id: int):
     if calculated_total != order.total:
         raise HTTPException(status_code=400, detail=f"合計金額が正しくありません（期待値: {calculated_total}, 送信値: {order.total}）")
     
-    tendered_total = sum(pm.cash + pm.ticket_100 * 100 + pm.ticket_200 * 200 + pm.emoney for pm in order.payment_method);
+    tendered_total = sum(pm.cash + pm.ticket_100 * 100 + pm.ticket_200 * 200 + pm.emoney for pm in order.payment_method)
  
     if tendered_total < order.total:
         raise HTTPException(status_code=400, detail="支払額は合計金額以上である必要があります")
@@ -116,7 +116,7 @@ def update(db: Session, order_id: int, order: schemas.OrderCreate, store_id: int
     if calculated_total != order.total:
         raise HTTPException(status_code=400, detail=f"合計金額が正しくありません（期待値: {calculated_total}, 送信値: {order.total}）")
     
-    tendered_total = sum(pm.cash + pm.ticket_100 * 100 + pm.ticket_200 * 200 + pm.emoney for pm in order.payment_method);
+    tendered_total = sum(pm.cash + pm.ticket_100 * 100 + pm.ticket_200 * 200 + pm.emoney for pm in order.payment_method)
  
     if tendered_total < order.total:
         raise HTTPException(status_code=400, detail="支払額は合計金額以上である必要があります")
@@ -146,6 +146,16 @@ def update(db: Session, order_id: int, order: schemas.OrderCreate, store_id: int
  
 def delete(db: Session, order_id: int, store_id: int):
     db_order = get_by_order_no(db, order_id, store_id)
+
+    # 在庫を元に戻す（updateの在庫復元処理と同様）
+    for item in db_order.items:
+        product = db.query(models.Product).filter(
+            models.Product.id == item.product_id,
+            models.Product.store_id == store_id
+        ).first()
+        if product:
+            product.stock += item.quantity
+
     db.delete(db_order)
     db.commit()
     return {"message": "削除しました"}

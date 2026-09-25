@@ -1,0 +1,27 @@
+name: Dependency audit
+
+# 依存パッケージ（backend/requirements.txt）に既知の脆弱性が無いかを定期的にチェックする。
+# 毎週月曜9:00 UTCに自動実行、workflow_dispatchで手動実行も可能。
+# 失敗してもPRをブロックしない（push/pull_requestトリガーではないため通常のCIには影響しない）。
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+jobs:
+  pip-audit:
+    name: pip-audit (backend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit backend/requirements.txt
+        run: pip-audit -r backend/requirements.txt

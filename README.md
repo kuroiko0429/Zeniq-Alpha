@@ -16,6 +16,7 @@
   - [API詳細](#api詳細)
 - [セットアップ・起動方法](#セットアップ起動方法)
 - [環境変数](#環境変数)
+- [テスト](#テスト)
 - [初期データ](#初期データ)
 - [既知の課題・TODO](#既知の課題todo)
 - [Podman動作確認・起動速度メモ](./PODMAN_NOTES.md)（別ファイル）
@@ -63,21 +64,40 @@ Docker Compose により `postgres` / `backend` / `frontend(nginx)` の3サー�
 ## ディレクトリ構成
 
 ```
-tukudani-mohumohu/
-├── docker-compose.yml
+Zeniq-Alpha/
+├── docker-compose.yml          # Docker用
+├── docker-compose.podman.yml   # rootless Podman用（詳細はPODMAN_NOTES.md）
+├── .dockerignore
+├── .github/workflows/
+│   ├── ci.yml                  # backend pytest / frontend bun test / docker build
+│   └── dependency-audit.yml    # pip-auditの週次実行
 ├── alembic.ini
 ├── alembic/
 │   ├── env.py
 │   └── versions/
-│       ├── 001_initial.py             # stores, products, orders, order_items 等の初期スキーマ
-│       ├── 002_remove_subtotal.py     # order_items.subtotal カラムの削除
-│       └── 003_add_payment_methods.py # payment_methods テーブルの追加
+│       ├── 001_initial.py                      # stores, products, orders, order_items 等の初期スキーマ
+│       ├── 002_remove_subtotal.py              # order_items.subtotal カラムの削除
+│       ├── 003_add_payment_methods.py          # payment_methods テーブルの追加
+│       ├── 004_add_is_admin_to_stores.py       # stores.is_admin カラムの追加
+│       ├── 005_add_unique_store_product_no.py  # (store_id, store_product_no) の一意制約
+│       ├── 006_add_order_item_unit_price.py    # order_items.unit_price（購入時単価）の追加
+│       └── 007_products_stock_not_null.py      # products.stock を NOT NULL に変更
 ├── backend/
-│   ├── main.py                # FastAPIアプリのエントリーポイント
+│   ├── main.py                # FastAPIアプリのエントリーポイント（CORS・例外ハンドラ・レート制限の設定含む）
 │   ├── database.py            # DB接続・セッション設定
+│   ├── rate_limit.py          # slowapiのLimiter（ログインのレート制限）
 │   ├── init_stores.py         # 初期店舗データ投入スクリプト
 │   ├── init_data.py           # 初期商品データ投入スクリプト
 │   ├── entrypoint.sh          # コンテナ起動スクリプト（alembic upgrade → uvicorn起動）
+│   ├── requirements.txt
+│   ├── requirements-dev.txt   # pytest等、テスト実行時のみ必要な依存
+│   ├── pytest.ini
+│   ├── tests/                 # pytest（SQLiteインメモリDBで実行、DockerもPostgreSQLも不要）
+│   │   ├── conftest.py
+│   │   ├── test_auth.py
+│   │   ├── test_products.py
+│   │   ├── test_orders.py
+│   │   └── test_sales.py
 │   ├── auth/
 │   │   └── dependencies.py    # JWT検証・認証依存関数（get_current_store）
 │   ├── models/                # SQLAlchemyモデル（DBスキーマ）
@@ -98,38 +118,43 @@ tukudani-mohumohu/
 │       ├── orders.py
 │       └── sales.py
 └── frontend/
-    ├── login.html          # ログイン／店舗新規登録
-    ├── index.html          # POSレジ（会計）画面
-    ├── items.html          # 商品管理画面
-    ├── orders.html         # 会計履歴画面
-    ├── sales.html          # 売上分析画面
-    ├── admin.html          # 管理画面（未実装）
-    ├── css/                # 画面ごとのスタイル
-    ├── img/                # アイコン画像
+    ├── package.json         # `bun test` 実行用
+    ├── login.html           # ログイン／店舗新規登録
+    ├── index.html           # POSレジ（会計）画面
+    ├── items.html           # 商品管理画面
+    ├── orders.html          # 会計履歴画面
+    ├── sales.html           # 売上分析画面
+    ├── admin.html           # 管理画面（店舗登録、管理者のみ）
+    ├── css/                 # 画面ごとのスタイル
+    ├── img/                 # アイコン画像
     └── js/
-        ├── api.js          # バックエンドAPI呼び出しの共通モジュール
-        ├── auth.js         # トークン保存・認証状態管理・ログアウト
-        ├── header.js       # 共通ヘッダー（ナビゲーション）の描画・認証ガード
-        ├── login.js        # ログイン／新規登録画面のロジック（API連携済み）
-        ├── pos.js          # POSレジ画面のロジック（現状ダミーデータで動作）
-        ├── items.js        # 商品管理画面のロジック（現状ダミーデータで動作）
-        ├── orders.js       # 会計履歴画面のロジック（現状ダミーデータで動作）
-        └── sales.js        # 売上分析画面のロジック（タブ切替のみ、静的データ）
+        ├── config.js        # window.__ENV__.API_BASE（バックエンドURL設定）
+        ├── api.js           # バックエンドAPI呼び出しの共通モジュール
+        ├── auth.js          # トークン・管理者フラグの保存/取得、認証ガード
+        ├── header.js        # 共通ヘッダー（ナビゲーション）の描画・認証ガード
+        ├── login.js         # ログイン画面のロジック
+        ├── pos.js           # POSレジ画面のDOM制御
+        ├── pos-calc.js      # POSレジの金額計算ロジック（DOM非依存、単体テスト対象）
+        ├── pos-calc.test.js # pos-calc.js の単体テスト（`bun test`）
+        ├── items.js         # 商品管理画面のロジック
+        ├── orders.js        # 会計履歴画面のロジック
+        ├── sales.js         # 売上分析画面のロジック
+        └── admin.js         # 管理画面（店舗登録）のロジック
 ```
 
 ## 画面一覧（フロントエンド）
 
 | 画面 | ファイル | 現状 |
 |---|---|---|
-| ログイン／新規登録 | `login.html` | ✅ 連携済み。`POST /api/auth/login`・`POST /api/auth/register` を実際に呼び出し、成功するとトークンを保存して各画面へ遷移する |
-| 共通ヘッダー | `header.js` | 🚧 `index.html` / `items.html` / `sales.html` では `<script type="module">` で読み込まれ、未ログイン時のリダイレクト（`requireAuth`）と店舗名表示は動作する。ただしヘッダー内の「ログアウト」ボタンにはクリックイベントが一切バインドされておらず（`auth.js`の`logoutWithConfirm`はimportされているが未使用）、押しても何も起こらない |
-| POSレジ | `index.html` | 🚧 UIプロトタイプ。商品選択・カート追加／数量変更・支払方法（現金／模擬券／QR決済）選択・お釣り計算のUIロジックは実装済みだが、商品はダミーデータ（キャンディ・ソーダ）を使用し、`api.js`からの商品取得・注文送信は未接続。会計実行ボタンはアラート表示のみ |
-| 商品管理 | `items.html` | 🚧 UIプロトタイプ。商品カードの追加・編集・削除のUI操作は実装済みだが、表示データはHTMLに直書きされたダミーデータで、`api.js`とは未接続 |
-| 会計履歴 | `orders.html` | ⚠️ `header.js` の読み込みが `<script src="js/header.js">`（`type="module"`なし）になっており、モジュール内の`import`文が実行時エラーになるため、この画面では共通ヘッダー自体が描画されない（＝未ログインリダイレクトも効かない）。それ以外の検索フィルターUI・タブ切替は実装済みだが、表示データはJS内のダミー配列（`orderAry`）で`getOrders`とは未接続 |
-| 売上分析 | `sales.html` | 🚧 UIプロトタイプ。日別／全期間タブ切替の見た目のみ実装。表示内容はHTMLに直書きされた静的な数値で、`getSalesSummary`とは未接続 |
-| 管理画面 | `admin.html` | ⛔ 未実装（「実装予定」の見出しのみ） |
+| ログイン／新規登録 | `login.html` | ✅ 連携済み。`POST /api/auth/login` を実際に呼び出し、成功するとトークンを保存して各画面へ遷移する |
+| 共通ヘッダー | `header.js` | ✅ 全画面で `<script type="module">` 読み込み・未ログイン時のリダイレクト（`requireAuth`）・店舗名表示・ログアウトボタンのクリックイベントとも連携済み。管理者（`is_admin`）ログイン時のみ「管理画面」リンクを表示 |
+| POSレジ | `index.html` | ✅ 連携済み。商品一覧はAPIから取得し、会計実行で`POST /api/orders`を呼び出す。会計金額・お釣り・模擬券不足判定のロジックは`js/pos-calc.js`に切り出し、単体テスト済み |
+| 商品管理 | `items.html` | ✅ 連携済み。商品の追加・編集・削除がすべて`api.js`経由でバックエンドに反映される |
+| 会計履歴 | `orders.html` | ✅ 連携済み。`header.js`は`type="module"`で読み込まれ、検索フィルター・編集・削除とも`api.js`と連携している |
+| 売上分析 | `sales.html` | ✅ 連携済み。日別／全期間タブとも`GET /api/sales/summary`から取得したデータを表示する |
+| 管理画面 | `admin.html` | ✅ 実装済み。管理者（運営本部）アカウントのみアクセスでき、`POST /api/auth/register`を呼び出して新規店舗を登録できる。非管理者がURLを直接叩いても`index.html`へリダイレクトされる |
 
-> `js/api.js` はバックエンドの現行仕様（本READMEの[API詳細](#api詳細)）に沿って実装済みです。POSレジ・商品管理・会計履歴・売上分析の各画面については、UI（見た目・操作感）は作り込まれているものの、`api.js`の呼び出しへの差し替え（ダミーデータの除去とfetch連携）が今後の実装課題です。
+> フロントエンドが参照するバックエンドのURLは `frontend/js/config.js`（`window.__ENV__.API_BASE`）で設定する。別ホスト/別ポートで動かす場合はこのファイルだけを書き換えればよい。
 
 ## バックエンドAPI
 
@@ -351,22 +376,41 @@ username=yakisoba&password=pass1234
 
 ## セットアップ・起動方法
 
+### Docker
+
 ```bash
 docker compose up -d --build
 ```
+
+### Podman（rootless）
+
+Docker用の`docker-compose.yml`をrootless Podmanでそのまま使うと、短縮イメージ名の解決エラーや80番ポートのbind権限エラーで失敗します（詳細は`PODMAN_NOTES.md`参照）。Podman専用の`docker-compose.podman.yml`（イメージ名をフル修飾し、frontendを8080番で公開）を使ってください。
+
+```bash
+podman-compose -f docker-compose.podman.yml up -d --build
+```
+
+Podmanではフロントエンドのポートが8080番になる点以外は、以降の手順（初期データ投入等）はDocker/Podman共通です。
+
+### 共通の初期セットアップ
 
 - `entrypoint.sh` が起動時に `alembic upgrade head` を実行し、`stores` / `products` / `orders` / `order_items` / `payment_methods` テーブルを作成します。
 - 初期データ投入（初回のみ、テーブルが空の場合に実行されます）:
 
 ```bash
+# Docker
 docker compose exec backend python init_stores.py
 docker compose exec backend python init_data.py
+
+# Podman
+podman exec <backendコンテナ名> python init_stores.py
+podman exec <backendコンテナ名> python init_data.py
 ```
 
 - API: `http://localhost:8000`（Swagger UI: `http://localhost:8000/docs`）
-- フロントエンド（nginx配信の静的ファイル）: `http://localhost:80`
+- フロントエンド（nginx配信の静的ファイル）: Docker=`http://localhost:80` / Podman=`http://localhost:8080`
 
-DBスキーマを作り直したい場合:
+DBスキーマを作り直したい場合（Dockerの例。Podmanは`docker compose`を`podman-compose -f docker-compose.podman.yml`に読み替え）:
 
 ```bash
 docker compose down -v   # DBボリュームを削除（データは消えます）
@@ -375,16 +419,45 @@ docker compose exec backend python init_stores.py
 docker compose exec backend python init_data.py
 ```
 
-> フロントエンドの `js/api.js` は `API_BASE = 'http://localhost:8000'` に固定されているため、別ホストで動かす場合はこの値を変更してください。
+> フロントエンドが参照するバックエンドURLは `frontend/js/config.js`（`window.__ENV__.API_BASE`）で設定します。デフォルトは`http://localhost:8000`。別ホスト/別ポートでbackendを動かす場合は、`api.js`を直接編集せずこのファイルだけを書き換えてください。
 
 ## 環境変数
 
 | 変数名 | デフォルト値 | 説明 |
 |---|---|---|
 | `DATABASE_URL` | `postgresql://user:password@localhost:5432/pos_db` | DB接続文字列（`docker-compose.yml` では `postgresql://postgres:postgres@postgres:5432/pos_db` を指定） |
-| `SECRET_KEY` | `dev-secret-key-change-this` | JWT署名キー（本番では必ず変更すること） |
+| `SECRET_KEY` | **必須（デフォルト値なし）** | JWT署名キー。未設定だとbackendは起動時にエラーで落ちる（本番相当の秘密鍵ハードコード防止のため）。ローカル動作確認用の値は`docker-compose.yml`/`docker-compose.podman.yml`に設定済み |
 | `DB_HOST` | - | `entrypoint.sh` のPostgreSQL起動待ち用ホスト名 |
 | `DB_USER` | - | `entrypoint.sh` のPostgreSQL起動待ち用ユーザー名 |
+| `CORS_ORIGINS` | localhost:80/8080等（`main.py`参照） | 許可するフロントエンドのオリジン（カンマ区切り）。未設定時はDocker/Podman双方のローカル配信ポートを許可 |
+| `ENVIRONMENT` | 未設定（開発モード） | `production` を指定すると`uvicorn --reload`を無効化する（本番相当運用時のCPU負荷軽減） |
+
+## テスト
+
+### バックエンド（pytest）
+
+実DB（PostgreSQL）ではなく、テストごとに独立したインメモリSQLiteを使うため、Docker/Podmanなしでも実行できます。
+
+```bash
+cd backend
+pip install -r requirements-dev.txt
+SECRET_KEY=test-secret-key pytest -v
+```
+
+認証・商品・注文・売上の各APIについて、正常系に加えて在庫不足／不正な合計金額／権限エラー／価格変更後も過去の注文の単価が変わらないこと、などの境界値・不変条件をテストしています（`backend/tests/`）。
+
+### フロントエンド（bun test）
+
+POSレジの会計金額計算・お釣り計算・模擬券不足判定・支払方法組み立てロジック（`frontend/js/pos-calc.js`）を対象に、[Bun](https://bun.sh/)のテストランナーでテストしています。ビルドステップが無い構成のため、追加の依存インストールは不要です。
+
+```bash
+cd frontend
+bun test
+```
+
+### CI
+
+`.github/workflows/ci.yml` で、push・pull request のたびに上記2つのテストと、backendイメージの`docker build`確認を実行します。`.github/workflows/dependency-audit.yml` は毎週`pip-audit`でbackendの依存パッケージの既知脆弱性をチェックします（手動実行も可能）。
 
 ## 初期データ
 

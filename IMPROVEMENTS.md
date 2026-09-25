@@ -60,14 +60,25 @@
 - ~~**API_BASEがハードコード**~~
   → `frontend/js/config.js`で`window.__ENV__.API_BASE`を注入する方式に変更（ビルドステップが無い素のHTML/JS構成のため、`window.__ENV__`注入を採用）。`api.js`は`window.__ENV__?.API_BASE`を優先し、未設定時のみデフォルト値にフォールバック。API呼び出しを行う全6画面（login/index/items/orders/sales/admin）に`<script src="js/config.js">`を追加し、`type="module"`のスクリプトより確実に先に実行されるようにした。
 
-## 🐳 インフラ・DevOps
+## 🐳 インフラ・DevOps — ✅ 対応済み
 
-- **Dockerfileに`.dockerignore`がない**。ビルドコンテキストに`.git`等の不要ファイルまで含まれてしまう。`backend/.dockerignore`（`__pycache__`, `.git`, `*.pyc`等）を追加。
-- **CIが存在しない**（GitHub Actions等なし）。少なくとも「backendの起動確認」「pytestがあれば実行」程度のワークフローを入れたい。
-- **依存パッケージのバージョンが2024年前後で固定**（`fastapi==0.111.0`, `python-jose==3.3.0`等）。既知の脆弱性がないか`pip-audit`等で定期チェックしたい。
-- **Podman環境での動作が未整備**（詳細は`PODMAN_NOTES.md`）。`registries.conf`の要求、rootless時の特権ポート制限、`entrypoint.sh`の実行ビット消失など。プロジェクトとしてPodmanもサポート対象にするなら、READMEにDocker/Podman両対応の手順を書いておきたい。
+- ~~**Dockerfileに`.dockerignore`がない**~~
+  → `.dockerignore`をリポジトリ**ルート**に追加（`backend/Dockerfile`のビルドコンテキストは`docker-compose.yml`で`context: .`＝リポジトリルートに設定されているため、`backend/.dockerignore`ではなくルート直下に置く必要がある点に注意。元のメモの想定場所は誤りだったので修正した）。`.git`・`frontend/`・ドキュメント・`__pycache__`等を除外。
+- ~~**CIが存在しない**~~
+  → `.github/workflows/ci.yml`を追加。push/pull requestのたびに (1) backendのpytest（`backend/tests/`、32ケース）、(2) frontendの`bun test`（33ケース）、(3) backendイメージの`docker build`確認、の3ジョブを実行。backendには以前テストが1件も無かったため、CIを機能させるためにまず`backend/tests/`（認証・商品・注文・売上の正常系/異常系/境界値）を新規に書いた。テスト用DBは実PostgreSQLではなくテストごとに独立したインメモリSQLiteを使うため、CI側でPostgreSQLサービスコンテナを用意する必要がない。
+- ~~**依存パッケージのバージョンが2024年前後で固定**~~
+  → `.github/workflows/dependency-audit.yml`を追加。毎週月曜（`workflow_dispatch`で手動実行も可）に`pip-audit`で`backend/requirements.txt`の既知脆弱性をチェックする。push/pull requestをブロックしない独立ワークフローとした。
+- ~~**Podman環境での動作が未整備**~~
+  → 既に`docker-compose.podman.yml`（フル修飾イメージ名・frontend 8080番）と`PODMAN_NOTES.md`で対応済みだったものを、README本体にも反映。`README.md`のセットアップ節にDocker/Podman両方の起動コマンドを併記し、`環境変数`表を`SECRET_KEY`必須化・`CORS_ORIGINS`・`ENVIRONMENT`の追加分も含めて更新した。
 
-## 📌 その他・軽微
+## 📌 その他・軽微 — ✅ 対応済み
 
-- `backend/services/order_service.py`の各所にセミコロン付きの文（`services/order_service.py:32`, `114`など）が混じっている。Pythonなので不要、統一したい。
-- `README.md`のスクリーン実装状況の表（画面一覧）が古い。`header.js`はログアウトボタンのイベントバインド済み、`orders.html`は`type="module"`化済み、`pos.js`/`items.js`/`orders.js`/`sales.js`もAPI連携済みなど、実装が進んでREADMEの記述と食い違っている箇所が複数ある。ドキュメントの同期も改造の一環でやりたい。
+- ~~`backend/services/order_service.py`の不要なセミコロン~~ → 削除済み。
+- ~~`README.md`の画面一覧表が古い~~ → 全画面が連携済みであることを反映し、ディレクトリ構成図・環境変数表もあわせて現状に同期した。README に「テスト」節（pytest / bun test / CIの実行方法）も新設。
+
+## テスト整備の過程で見つけた追加バグ（今回まとめて修正済み）
+
+インフラ整備のためにbackendへ初めてテストを書いたところ、以下2件の実害あるバグが見つかったため、あわせて修正した。
+
+- **`routers/sales.py`の商品別売上（`sales_by_product`）が、購入時点の単価ではなく現在の商品価格で再計算されていた**（`models.Product.price * models.OrderItem.quantity`）。`order_items.unit_price`追加時（データ整合性の回で）に、この集計クエリだけ移行し忘れていた。`models.OrderItem.unit_price * models.OrderItem.quantity`を使うよう修正し、「注文後に商品価格を変更しても売上集計の金額は変わらない」ことをテストで固定した。
+- **`services/order_service.py`の`delete()`が在庫を復元していなかった**。同じファイルの`update()`は古い注文明細の分だけ在庫を戻す処理があるのに、`delete()`にはその処理が無く、注文を削除しても在庫が減ったままになっていた。`update()`と同様の復元処理を追加し、テストで固定した。
